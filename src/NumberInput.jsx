@@ -21,9 +21,7 @@ function NumberInput({ id, data }) {
   const [number, setNumber] = useState(data.value);
 
   const onChange = useCallback((evt) => {
-    const cappedNumber = Math.round(
-      Math.min(255, Math.max(0, evt.target.value))
-    );
+    const cappedNumber = Math.min(255, Math.max(0, evt.target.value));
     setNumber(cappedNumber);
     updateNodeData(id, { value: cappedNumber });
   }, []);

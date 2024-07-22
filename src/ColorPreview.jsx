@@ -30,7 +30,11 @@ function ColorPreview() {
   });
   const blueNodeData = useNodesData(blueConnections?.[0].source);
 
-  const color = { r: 0, g: 0, b: 0 };
+  const color = {
+    r: blueNodeData?.data ? redNodeData.data.value : 0,
+    g: greenNodeData?.data ? greenNodeData.data.value : 0,
+    b: blueNodeData?.data ? blueNodeData.data.value : 0,
+  };
 
   return (
     <div
