@@ -9,15 +9,18 @@ import {
   Background,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { v4 as uuidv4 } from "uuid";
 
 import "./style.css";
 
 import NumberInput from "./NumberInput.jsx";
 import ColorPreview from "./ColorPreview.jsx";
+import FileNode from "./FileNode.jsx";
 
 const nodeTypes = {
   NumberInput,
   ColorPreview,
+  FileNode,
 };
 
 const initialNodes = [
@@ -87,8 +90,43 @@ const App = () => {
     []
   );
 
+  const handleClick = () => {
+    console.log("Clicked");
+    //TODO: add a new node to the nodes array
+    // Define the new node
+    const newFileNode = {
+      id: uuidv4(), // Generate a unique id
+      type: "FileNode", // Type of node
+      data: { label: `New Node`, value: 0 },
+      position: { x: Math.random() * 400, y: Math.random() * 400 }, // Random position
+    };
+    // Find the last node of the same type
+    const lastNode = nodes
+      .filter((node) => node.type === "FileNode")
+      .slice(-1)[0];
+
+    // Define the new edge, if there is a last node of the same type
+    const newEdge = lastNode
+      ? {
+          id: uuidv4(), // Generate a unique id for the edge
+          source: lastNode.id,
+          target: newFileNode.id,
+        }
+      : null;
+
+    // Add the new node to the nodes array
+    setNodes((nds) => [...nds, newFileNode]);
+
+    // Add the new edge to the edges array if it exists
+    if (newEdge) {
+      setEdges((eds) => [...eds, newEdge]);
+    }
+  };
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
+      <button id="addbtn" onClick={handleClick}>
+        Add
+      </button>
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
@@ -96,6 +134,8 @@ const App = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        selectionKeyCode={16} // Shift key
+        multiSelectionKeyCode={17} // Ctrl key
         fitView
       >
         <Background variant="dots" />
