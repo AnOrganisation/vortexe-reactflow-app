@@ -35,7 +35,7 @@ const Navbar = () => {
       <div className="flex flex-row justify-between w-full">
         <Button
           radius="full"
-          className="w-[100px] h-[28px] bg-[#6366F1] text-white"
+          className="w-[100px] h-[28px] bg-[#6366F1] text-white focus:outline-none"
         >
           <p>Upload</p>
           <svg
@@ -54,14 +54,14 @@ const Navbar = () => {
           </svg>
         </Button>
         <ButtonGroup variant="flat">
-          <Button className="w-[180px] h-[26px] border border-[#6366F1] bg-transparent text-white">
+          <Button className="w-[180px] h-[26px] border border-[#6366F1] bg-transparent text-white focus:outline-none">
             {labelsMap[selectedOptionValue]}
           </Button>
           <Dropdown placement="bottom-end" className="bg-[#1F1F1F]">
             <DropdownTrigger>
               <Button
                 isIconOnly
-                className="h-[26px] border border-[#6366F1] bg-transparent text-white"
+                className="h-[26px] border border-[#6366F1] bg-transparent text-white focus:outline-none"
               >
                 <ChevronDownIcon />
               </Button>
