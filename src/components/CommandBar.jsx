@@ -74,7 +74,7 @@ const CommandBar = () => {
             <p className="absolute">Custom Command +</p>
           </div>
         </Button>
-        <div className="mb-3 space-y-2 overflow-y-auto max-h-96">
+        <div className="mb-3 space-y-2 overflow-y-auto max-h-96 custom-scrollbar">
           {commands.map((command, index) => (
             <Commands key={index} command={command} />
           ))}

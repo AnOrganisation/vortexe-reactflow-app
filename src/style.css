@@ -48,9 +48,29 @@
   z-index: 20;
 }
 
-.filenode {
+/* .filenode {
   padding: 10px;
   background: #fff;
   border: 1px solid #eee;
   border-radius: 10px;
+} */
+
+/* Custom scrollbar styles with rounded borders */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* Transparent track background */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #6366f1; /* Scrollbar thumb color */
+  border-radius: 10px; /* Rounded corners */
+  border: 2px solid transparent; /* Adds a little padding around the thumb */
+  background-clip: padding-box; /* Ensures the rounded effect is visible */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #4c51bf; /* Darker shade on hover */
 }
