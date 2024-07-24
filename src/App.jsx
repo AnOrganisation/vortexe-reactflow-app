@@ -8,6 +8,7 @@ import {
   MiniMap,
   Background,
 } from "@xyflow/react";
+import { Image } from "@nextui-org/image";
 import "@xyflow/react/dist/style.css";
 import { v4 as uuidv4 } from "uuid";
 
@@ -131,13 +132,12 @@ const App = () => {
         <Navbar />
       </div>
       <CommandBar />
-      <button
+      {/* <button
         className="absolute left-0 z-20 mt-4 ml-4 cursor-pointer"
         onClick={handleClick}
       >
         Add
-      </button>
-
+      </button> */}
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
