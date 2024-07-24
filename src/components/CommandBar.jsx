@@ -3,6 +3,12 @@ import { Tabs, Tab } from "@nextui-org/react";
 import Commands from "./Commands";
 import { Button } from "@nextui-org/react";
 
+/**
+ * CommandBar component renders a UI element that allows users to interact with a list of commands.
+ * It includes a search input, buttons to toggle between "Commands" and "Workflows", and a list of command buttons.
+ *
+ * @returns {JSX.Element} The rendered CommandBar component.
+ */
 const CommandBar = () => {
   const initialCommands = [
     "Simplify",
@@ -28,7 +34,11 @@ const CommandBar = () => {
   // State to track which button is active, default is 'Commands'
   const [activeButton, setActiveButton] = useState("Commands");
 
-  // Function to handle button clicks
+  /**
+   * Handles button clicks to set the active button state.
+   *
+   * @param {string} buttonName - The name of the button that was clicked.
+   */
   const handleClick = (buttonName) => {
     setActiveButton(buttonName);
   };
@@ -64,7 +74,7 @@ const CommandBar = () => {
             <p className="absolute">Custom Command +</p>
           </div>
         </Button>
-        <div className="space-y-2 overflow-y-auto max-h-96">
+        <div className="mb-3 space-y-2 overflow-y-auto max-h-96">
           {commands.map((command, index) => (
             <Commands key={index} command={command} />
           ))}

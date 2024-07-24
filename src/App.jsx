@@ -93,6 +93,12 @@ const App = () => {
     []
   );
 
+  /**
+   * Handles the click event to add a new node and potentially a new edge to the graph.
+   *
+   * @param {string} name - The name of the command to be displayed on the new node.
+   * @param {string} type - The type of the node to be added.
+   */
   //send command name here to be displayed on the newnode
   const handleClick = (name, type) => {
     console.log("Clicked");
@@ -126,6 +132,7 @@ const App = () => {
       setEdges((eds) => [...eds, newEdge]);
     }
   };
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <div className="relative flex flex-row items-center justify-center w-full">

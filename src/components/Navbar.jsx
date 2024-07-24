@@ -10,6 +10,11 @@ import {
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 
+/**
+ * Navbar component that provides a navigation bar with upload button, workspace selection dropdown, and user avatar.
+ *
+ * @returns {JSX.Element} The rendered Navbar component.
+ */
 const Navbar = () => {
   const [selectedOption, setSelectedOption] = React.useState(
     new Set(["Workspace1"])
