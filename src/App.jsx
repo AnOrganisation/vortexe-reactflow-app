@@ -11,11 +11,13 @@ import {
 import "@xyflow/react/dist/style.css";
 import { v4 as uuidv4 } from "uuid";
 
-// import "./style.css";
-
 import NumberInput from "./NumberInput.jsx";
 import ColorPreview from "./ColorPreview.jsx";
 import FileNode from "./FileNode.jsx";
+
+import Navbar from "./components/Navbar.jsx";
+import CommandBar from "./components/CommandBar.jsx";
+import ChatBubble from "./components/ChatBubble.jsx";
 
 const nodeTypes = {
   NumberInput,
@@ -90,7 +92,8 @@ const App = () => {
     []
   );
 
-  const handleClick = () => {
+  //send command name here to be displayed on the newnode
+  const handleClick = (name, type) => {
     console.log("Clicked");
     //TODO: add a new node to the nodes array
     // Define the new node
@@ -124,9 +127,17 @@ const App = () => {
   };
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
-      <button id="addbtn" onClick={handleClick}>
+      <div className="relative flex flex-row items-center justify-center w-full">
+        <Navbar />
+      </div>
+      <CommandBar />
+      <button
+        className="absolute left-0 z-20 mt-4 ml-4 cursor-pointer"
+        onClick={handleClick}
+      >
         Add
       </button>
+
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
