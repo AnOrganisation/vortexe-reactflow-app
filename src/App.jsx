@@ -20,6 +20,8 @@ import Navbar from "./components/Navbar.jsx";
 import CommandBar from "./components/CommandBar.jsx";
 import ChatBubble from "./components/ChatBubble.jsx";
 
+import "./style.css";
+
 const nodeTypes = {
   NumberInput,
   ColorPreview,
