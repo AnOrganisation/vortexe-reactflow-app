@@ -1,11 +1,8 @@
 import React from "react";
 
-const Commands = (index, command) => {
+const Commands = ({ command }) => {
   return (
-    <button
-      key={index}
-      className="w-[140px] h-[27px] p-2 bg-white text-black rounded-full focus:outline-none ml-3 mb-3"
-    >
+    <button className="w-[140px] h-[27px] p-2 bg-white text-black rounded-full focus:outline-none ml-3 hover:bg-[#6366F1] hover:text-white">
       <div className="relative flex items-center justify-center">
         <p className="absolute">{command}</p>
       </div>

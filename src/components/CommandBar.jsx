@@ -1,6 +1,7 @@
 import React from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import Commands from "./Commands";
+import MyButton from "./MyButton";
 
 const CommandBar = () => {
   return (
@@ -18,9 +19,6 @@ const CommandBar = () => {
           Workflows
         </button>
       </div>
-      {/* <button className="flex items-center justify-between w-full p-2 mb-4 bg-gray-800 rounded-lg focus:outline-none">
-        Custom Command <span className="text-lg">+</span>
-      </button> */}
       <div className="border border-[#6366F1] rounded-lg w-[90%] mb-5 flex flex-col">
         <button className="w-[155px] h-[27px] p-2 text-white bg-[#6366F1] text-sm ml-2 rounded-full mb-10 mt-3">
           <div className="relative flex items-center justify-center">
@@ -43,15 +41,12 @@ const CommandBar = () => {
             "FAQ",
             "Inspiration",
             "Grammar",
+            "Randomize",
+            "Translate",
+            "Fix Format",
+            "Add Refs",
           ].map((command, index) => (
-            <button
-              key={index}
-              className="w-[140px] h-[27px] p-2 bg-white text-black rounded-full focus:outline-none ml-3"
-            >
-              <div className="relative flex items-center justify-center">
-                <p className="absolute">{command}</p>
-              </div>
-            </button>
+            <Commands key={index} command={command} /> // Pass `command` prop correctly
           ))}
         </div>
       </div>
