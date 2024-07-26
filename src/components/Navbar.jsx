@@ -9,6 +9,7 @@ import {
   Avatar,
   Image,
   Input,
+  Tooltip,
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 
@@ -94,7 +95,7 @@ const Navbar = () => {
     setWorkspaceInputValue(labelsMap[selectedKey]);
   };
   return (
-    <nav className="absolute z-20  w-1/2 p-4 mt-24 text-white bg-[#1F1F1F] rounded-full cursor-pointer border-[#6366F1] border h-[44px] flex items-center">
+    <nav className="absolute z-20 w-1/2 p-4 mt-24 text-white bg-[#1F1F1F] rounded-full cursor-pointer border-[#6366F1] border h-[44px] flex items-center">
       <div className="flex flex-row justify-between w-full">
         <Button
           radius="full"
@@ -121,28 +122,35 @@ const Navbar = () => {
            * Dropdown Menu for Workspace Selection.
            ** When the workspace button is clicked, the user can input a workspace name to change the workspace name.
            */}
-          <Button
-            disableRipple
-            disableAnimation
-            onPress={handleWorkspaceButtonClick}
-            className="w-[180px] h-[26px] border border-[#6366F1] bg-transparent text-white focus:outline-none"
+          <Tooltip
+            placement="left"
+            color="Secondary"
+            content="CLICK to Edit, ENTER to Save"
+            className="bg-[#6366F1] text-white"
           >
-            {/* Conditionally render the input field or the workspace label if the wrokspace button was pressed */}
-            {WorkspaceBtnPressed ? (
-              <input
-                ref={inputRef}
-                onKeyDown={handleKeyDown}
-                type="text"
-                className="w-full h-[22px] text-white bg-transparent border-0 rounded-full focus:outline-none"
-                value={workspaceInputValue}
-                onChange={handleWorkspaceInputChange}
-              />
-            ) : (
-              <span className="flex items-center w-full h-full">
-                {labelsMap[selectedOptionValue]}
-              </span>
-            )}
-          </Button>
+            <Button
+              disableRipple
+              disableAnimation
+              onPress={handleWorkspaceButtonClick}
+              className="w-[180px] h-[26px] border border-[#6366F1] bg-transparent text-white focus:outline-none"
+            >
+              {/* Conditionally render the input field or the workspace label if the wrokspace button was pressed */}
+              {WorkspaceBtnPressed ? (
+                <input
+                  ref={inputRef}
+                  onKeyDown={handleKeyDown}
+                  type="text"
+                  className="w-full h-[22px] text-white bg-transparent border-0 rounded-full focus:outline-none"
+                  value={workspaceInputValue}
+                  onChange={handleWorkspaceInputChange}
+                />
+              ) : (
+                <span className="flex items-center w-full h-full">
+                  {labelsMap[selectedOptionValue]}
+                </span>
+              )}
+            </Button>
+          </Tooltip>
           <Dropdown placement="bottom-end" className="bg-[#1F1F1F]">
             <DropdownTrigger>
               <Button
