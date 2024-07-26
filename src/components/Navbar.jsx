@@ -87,6 +87,12 @@ const Navbar = () => {
       setWorkspaceBtnPressed(false); //set workspaceBtnPressed to false so it doesn't re-render the input field. Part of the logic for conditional rendering of the input field.
     }
   };
+
+  const handleSelectionChange = (keys) => {
+    const selectedKey = Array.from(keys)[0];
+    setSelectedOption(new Set([selectedKey]));
+    setWorkspaceInputValue(labelsMap[selectedKey]);
+  };
   return (
     <nav className="absolute z-20  w-1/2 p-4 mt-24 text-white bg-[#1F1F1F] rounded-full cursor-pointer border-[#6366F1] border h-[44px] flex items-center">
       <div className="flex flex-row justify-between w-full">
@@ -123,13 +129,10 @@ const Navbar = () => {
           >
             {/* Conditionally render the input field or the workspace label if the wrokspace button was pressed */}
             {WorkspaceBtnPressed ? (
-              <Input
+              <input
                 ref={inputRef}
                 onKeyDown={handleKeyDown}
                 type="text"
-                variant="bordered"
-                label="Workspace Name"
-                color="danger"
                 className="w-full h-[22px] text-white bg-transparent border-0 rounded-full focus:outline-none"
                 value={workspaceInputValue}
                 onChange={handleWorkspaceInputChange}
@@ -154,7 +157,7 @@ const Navbar = () => {
               aria-label="Merge options"
               selectedKeys={selectedOption}
               selectionMode="single"
-              onSelectionChange={setSelectedOption}
+              onSelectionChange={handleSelectionChange}
               className="max-w-[300px] bg-[#1F1F1F]"
             >
               {Object.keys(labelsMap).map((key) => (
