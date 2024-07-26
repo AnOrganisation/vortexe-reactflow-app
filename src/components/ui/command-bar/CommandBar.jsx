@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
-import Commands from "./Commands";
+import Command from "./action/Command";
 import { Button } from "@nextui-org/react";
 
 /**
@@ -76,7 +76,7 @@ const CommandBar = () => {
         </Button>
         <div className="mb-3 space-y-2 overflow-y-auto max-h-96 custom-scrollbar">
           {commands.map((command, index) => (
-            <Commands key={index} command={command} />
+            <Command key={index} command={command} />
           ))}
         </div>
       </div>
