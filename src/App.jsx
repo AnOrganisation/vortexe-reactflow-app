@@ -141,12 +141,12 @@ const App = () => {
         <Navbar />
       </div>
       <CommandBar />
-      {/* <button
+      <button
         className="absolute left-0 z-20 mt-4 ml-4 cursor-pointer"
         onClick={handleClick}
       >
         Add
-      </button> */}
+      </button>
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}

@@ -1237,6 +1237,10 @@ video {
   height: 14px;
 }
 
+.h-\[22px\] {
+  height: 22px;
+}
+
 .h-\[26px\] {
   height: 26px;
 }
@@ -3120,6 +3124,11 @@ video {
 .border-warning {
   --tw-border-opacity: 1;
   border-color: hsl(var(--nextui-warning) / var(--nextui-warning-opacity, var(--tw-border-opacity)));
+}
+
+.border-white {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .border-x-transparent {

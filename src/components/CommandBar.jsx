@@ -57,7 +57,7 @@ const CommandBar = () => {
           }`}
           onClick={() => handleClick("Commands")}
         >
-          Commands
+          Actions
         </Button>
         <Button
           className={`text-white focus:outline-none h-4 w-14 text-xxs text-center rounded-sm ${
@@ -71,7 +71,7 @@ const CommandBar = () => {
       <div className="border border-[#6366F1] rounded-lg w-[90%] mb-5 flex flex-col">
         <Button className="w-[155px] h-[27px] p-2 text-white bg-[#6366F1] text-sm ml-2 rounded-full mb-10 mt-3 focus:outline-none">
           <div className="relative flex items-center justify-center">
-            <p className="absolute">Custom Command +</p>
+            <p className="absolute">Custom Action +</p>
           </div>
         </Button>
         <div className="mb-3 space-y-2 overflow-y-auto max-h-96 custom-scrollbar">
