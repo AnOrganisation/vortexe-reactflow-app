@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Tabs, Tab } from "@nextui-org/react";
+import React, { useState, useEffect } from "react";
 import Command from "./action/Command";
+import Workflow from "./workflow/Workflow";
 import { Button } from "@nextui-org/react";
 
 /**
@@ -30,9 +30,55 @@ const CommandBar = () => {
     "Fix Format",
     "Add Refs",
   ];
+
+  const initialWorkflows = [
+    "Workflow 1",
+    "Workflow 2",
+    "Workflow 3",
+    "Workflow 4",
+    "Workflow 5",
+    "Workflow 6",
+    "Workflow 7",
+    "Workflow 8",
+    "Workflow 9",
+    "Workflow 10",
+    "Workflow 11",
+    "Workflow 12",
+    "Workflow 13",
+    "Workflow 14",
+    "Workflow 15",
+  ];
+
+  const [workflows, setWorkflows] = useState(initialWorkflows);
+  // State to store the filtered commands
   const [commands, setCommands] = useState(initialCommands);
   // State to track which button is active, default is 'Commands'
   const [activeButton, setActiveButton] = useState("Commands");
+  // State to track the search query
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    // Filter commands based on the search query
+    if (searchQuery === "") {
+      if (activeButton === "Commands") {
+        setCommands(initialCommands);
+      } else {
+        setWorkflows(initialWorkflows);
+      }
+    } else {
+      if (activeButton === "Commands") {
+        const filteredCommands = initialCommands.filter((command) =>
+          command.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setCommands(filteredCommands);
+      } else {
+        const filteredWorkflows = initialWorkflows.filter((workflow) =>
+          workflow.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setWorkflows(filteredWorkflows);
+      }
+    }
+  }, [searchQuery, initialCommands]);
 
   /**
    * Handles button clicks to set the active button state.
@@ -47,8 +93,12 @@ const CommandBar = () => {
     <div className="absolute z-20 w-48 max-h-screen text-white rounded-lg shadow-lg cursor-pointer bg-[#1F1F1F] left-5 top-28 flex flex-col items-center border border-[#6366F1]">
       <input
         type="text"
-        className="w-[148px] h-[14px] p-2 mb-4 text-white border-none rounded-full outline-none mt-5 bg-[#6366F1] bg-opacity-40"
-        placeholder="Search"
+        className="w-[148px] h-[14px] p-2 mb-4 text-white border-none rounded-full outline-none mt-5 bg-[#6366F1] bg-opacity-40 text-xs"
+        placeholder={
+          activeButton === "Commands" ? "Search an action" : "Search a workflow"
+        }
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
       />
       <div className="flex flex-row items-center w-full ml-6">
         <Button
@@ -71,13 +121,21 @@ const CommandBar = () => {
       <div className="border border-[#6366F1] rounded-lg w-[90%] mb-5 flex flex-col">
         <Button className="w-[155px] h-[27px] p-2 text-white bg-[#6366F1] text-sm ml-2 rounded-full mb-10 mt-3 focus:outline-none">
           <div className="relative flex items-center justify-center">
-            <p className="absolute">Custom Action +</p>
+            <p className="absolute">
+              {activeButton === "Commands"
+                ? "Custom Action +"
+                : "Custom Workflow +"}
+            </p>
           </div>
         </Button>
         <div className="mb-3 space-y-2 overflow-y-auto max-h-96 custom-scrollbar">
-          {commands.map((command, index) => (
-            <Command key={index} command={command} />
-          ))}
+          {activeButton === "Commands"
+            ? commands.map((command, index) => (
+                <Command key={index} command={command} />
+              ))
+            : workflows.map((workflow, index) => (
+                <Workflow key={index} workflow={workflow} />
+              ))}
         </div>
       </div>
     </div>
