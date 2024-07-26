@@ -8,7 +8,6 @@ import {
   MiniMap,
   Background,
 } from "@xyflow/react";
-import { Image } from "@nextui-org/image";
 import "@xyflow/react/dist/style.css";
 import { v4 as uuidv4 } from "uuid";
 
@@ -16,9 +15,9 @@ import NumberInput from "./NumberInput.jsx";
 import ColorPreview from "./ColorPreview.jsx";
 import FileNode from "./FileNode.jsx";
 
-import Navbar from "./components/Navbar.jsx";
-import CommandBar from "./components/CommandBar.jsx";
-import ChatBubble from "./components/ChatBubble.jsx";
+import Navbar from "./components/ui/nav/Navbar.jsx";
+import CommandBar from "./components/ui/command-bar/CommandBar.jsx";
+import ChatBubble from "./components/ui/ChatBubble.jsx";
 
 import "./style.css";
 
