@@ -51,8 +51,12 @@ const CustomActionBtn = ({ setCustomAction }) => {
       setCustomActionNameInvalid(true);
       return;
     } else {
-      //TODO: Add the custom action prompt to the CommandBar component state
-      setCustomAction((prevActions) => [...prevActions, customActionName]);
+      // Set the custom action in the parent component's state
+      setCustomAction((prevActions) => {
+        const newActions = new Map(prevActions);
+        newActions.set(customActionName, promptValue);
+        return newActions;
+      });
       onClose();
     }
   };

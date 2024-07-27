@@ -12,26 +12,26 @@ import CustomActionBtn from "./action/CustomActionBtn";
  * @returns {JSX.Element} The rendered CommandBar component.
  */
 const CommandBar = () => {
-  const initialCommands = [
-    "Simplify",
-    "Summarize",
-    "Email",
-    "Transcribe",
-    "Video",
-    "Analyze",
-    "Textify",
-    "Itinerary",
-    "Analytics",
-    "Customer Exp",
-    "Vocalize",
-    "FAQ",
-    "Inspiration",
-    "Grammar",
-    "Randomize",
-    "Translate",
-    "Fix Format",
-    "Add Refs",
-  ];
+  const initialCommands = new Map([
+    ["Simplify", "Simplify the text"],
+    ["Summarize", "Summarize the content"],
+    ["Email", "Compose an email"],
+    ["Transcribe", "Transcribe the audio"],
+    ["Video", "Process the video"],
+    ["Analyze", "Analyze the data"],
+    ["Textify", "Convert to text"],
+    ["Itinerary", "Create an itinerary"],
+    ["Analytics", "Generate analytics"],
+    ["Customer Exp", "Improve customer experience"],
+    ["Vocalize", "Convert text to speech"],
+    ["FAQ", "Generate FAQs"],
+    ["Inspiration", "Provide inspiration"],
+    ["Grammar", "Check grammar"],
+    ["Randomize", "Randomize the order"],
+    ["Translate", "Translate the text"],
+    ["Fix Format", "Fix the format"],
+    ["Add Refs", "Add references"],
+  ]);
 
   const initialWorkflows = [
     "Workflow 1",
@@ -59,13 +59,17 @@ const CommandBar = () => {
   // State to track the search query
   const [searchQuery, setSearchQuery] = useState("");
 
-  //State to track the custom actions
-  const [customActions, setCustomActions] = useState([]);
+  // State to track the custom actions
+  const [customActions, setCustomActions] = useState(new Map());
 
   useEffect(() => {
-    if (customActions.length !== 0) {
-      customActions.map((customAction) => {
-        setCommands((prevCommands) => [...prevCommands, customAction]);
+    if (customActions.size !== 0) {
+      setCommands((prevCommands) => {
+        const newCommands = new Map(prevCommands);
+        customActions.forEach((value, key) => {
+          newCommands.set(key, value);
+        });
+        return newCommands;
       });
     }
   }, [customActions]);
@@ -74,14 +78,16 @@ const CommandBar = () => {
     // Filter commands based on the search query
     if (searchQuery === "") {
       if (activeButton === "Commands") {
-        setCommands([...initialCommands, ...customActions]);
+        setCommands(new Map([...initialCommands, ...customActions]));
       } else {
         setWorkflows(initialWorkflows);
       }
     } else {
       if (activeButton === "Commands") {
-        const filteredCommands = [...initialCommands, ...customActions].filter(
-          (command) => command.toLowerCase().includes(searchQuery.toLowerCase())
+        const filteredCommands = new Map(
+          [...initialCommands, ...customActions].filter(([key, value]) =>
+            key.toLowerCase().includes(searchQuery.toLowerCase())
+          )
         );
         setCommands(filteredCommands);
       } else {
@@ -139,8 +145,8 @@ const CommandBar = () => {
         )}
         <div className="mb-3 space-y-2 overflow-y-auto max-h-96 custom-scrollbar">
           {activeButton === "Commands"
-            ? commands.map((command, index) => (
-                <Command key={index} command={command} />
+            ? Array.from(commands).map(([key, value], index) => (
+                <Command key={index} commandName={key} prompt={value} />
               ))
             : workflows.map((workflow, index) => (
                 <Workflow key={index} workflow={workflow} />
