@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Command from "./action/Command";
 import Workflow from "./workflow/Workflow";
 import { Button } from "@nextui-org/react";
+import CustomWorkflowBtn from "./workflow/CustomWorkflowBtn";
+import CustomActionBtn from "./action/CustomActionBtn";
 
 /**
  * CommandBar component renders a UI element that allows users to interact with a list of commands.
@@ -78,7 +80,7 @@ const CommandBar = () => {
         setWorkflows(filteredWorkflows);
       }
     }
-  }, [searchQuery, initialCommands]);
+  }, [searchQuery, activeButton]);
 
   /**
    * Handles button clicks to set the active button state.
@@ -119,15 +121,11 @@ const CommandBar = () => {
         </Button>
       </div>
       <div className="border border-[#6366F1] rounded-lg w-[90%] mb-5 flex flex-col">
-        <Button className="w-[155px] h-[27px] p-2 text-white bg-[#6366F1] text-sm ml-2 rounded-full mb-10 mt-3 focus:outline-none">
-          <div className="relative flex items-center justify-center">
-            <p className="absolute">
-              {activeButton === "Commands"
-                ? "Custom Action +"
-                : "Custom Workflow +"}
-            </p>
-          </div>
-        </Button>
+        {activeButton === "Commands" ? (
+          <CustomActionBtn />
+        ) : (
+          <CustomWorkflowBtn />
+        )}
         <div className="mb-3 space-y-2 overflow-y-auto max-h-96 custom-scrollbar">
           {activeButton === "Commands"
             ? commands.map((command, index) => (
