@@ -59,18 +59,29 @@ const CommandBar = () => {
   // State to track the search query
   const [searchQuery, setSearchQuery] = useState("");
 
+  //State to track the custom actions
+  const [customActions, setCustomActions] = useState([]);
+
+  useEffect(() => {
+    if (customActions.length !== 0) {
+      customActions.map((customAction) => {
+        setCommands((prevCommands) => [...prevCommands, customAction]);
+      });
+    }
+  }, [customActions]);
+
   useEffect(() => {
     // Filter commands based on the search query
     if (searchQuery === "") {
       if (activeButton === "Commands") {
-        setCommands(initialCommands);
+        setCommands([...initialCommands, ...customActions]);
       } else {
         setWorkflows(initialWorkflows);
       }
     } else {
       if (activeButton === "Commands") {
-        const filteredCommands = initialCommands.filter((command) =>
-          command.toLowerCase().includes(searchQuery.toLowerCase())
+        const filteredCommands = [...initialCommands, ...customActions].filter(
+          (command) => command.toLowerCase().includes(searchQuery.toLowerCase())
         );
         setCommands(filteredCommands);
       } else {
@@ -80,7 +91,7 @@ const CommandBar = () => {
         setWorkflows(filteredWorkflows);
       }
     }
-  }, [searchQuery, activeButton]);
+  }, [searchQuery, activeButton, customActions]);
 
   /**
    * Handles button clicks to set the active button state.
@@ -122,7 +133,7 @@ const CommandBar = () => {
       </div>
       <div className="border border-[#6366F1] rounded-lg w-[90%] mb-5 flex flex-col">
         {activeButton === "Commands" ? (
-          <CustomActionBtn />
+          <CustomActionBtn setCustomAction={setCustomActions} />
         ) : (
           <CustomWorkflowBtn />
         )}

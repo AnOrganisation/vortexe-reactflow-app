@@ -10,7 +10,7 @@ import {
 } from "@nextui-org/react";
 import React, { useState } from "react";
 
-const CustomActionBtn = () => {
+const CustomActionBtn = ({ setCustomAction }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   //State to store the custom action name
@@ -51,6 +51,8 @@ const CustomActionBtn = () => {
       setCustomActionNameInvalid(true);
       return;
     } else {
+      //TODO: Add the custom action prompt to the CommandBar component state
+      setCustomAction((prevActions) => [...prevActions, customActionName]);
       onClose();
     }
   };
