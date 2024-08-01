@@ -158,7 +158,10 @@ const CommandBar = () => {
         {activeButton === "Commands" ? (
           <CustomActionBtn setCustomAction={setCustomActions} />
         ) : (
-          <CustomWorkflowBtn setCustomWorkflow={setCustomWorkflows} />
+          <CustomWorkflowBtn
+            setCustomWorkflow={setCustomWorkflows}
+            commands={commands}
+          />
         )}
         <div className="mb-3 space-y-2 overflow-y-auto max-h-96 custom-scrollbar">
           {activeButton === "Commands"

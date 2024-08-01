@@ -95,7 +95,10 @@ const CustomActionBtn = ({ setCustomAction }) => {
                   maxRows={1}
                   variant="bordered"
                   radius="sm"
-                  label="Custom Action Name"
+                  label={
+                    <span style={{ color: "white" }}>Custom Action Name</span>
+                  }
+                  labelPlacement="outside"
                   placeholder="Enter your custom action name here..."
                   value={customActionName}
                   onChange={handleCustomActionNameChange}
@@ -108,7 +111,8 @@ const CustomActionBtn = ({ setCustomAction }) => {
                   isRequired
                   isInvalid={promptInvalid}
                   variant="bordered"
-                  label="Prompt"
+                  label={<span style={{ color: "white" }}>Prompt</span>}
+                  labelPlacement="outside"
                   placeholder="Write your prompt here..."
                   value={promptValue}
                   onChange={handlePromptValueChange}
