@@ -57,6 +57,13 @@ const CustomActionBtn = ({ setCustomAction }) => {
         newActions.set(customActionName, promptValue);
         return newActions;
       });
+      // Reset the form and close the modal
+      setCustomActionName("");
+      setPromptValue("");
+      setCustomActionNameInvalid(false);
+      setPromptInvalid(false);
+
+      // Close the modal after successful submission
       onClose();
     }
   };

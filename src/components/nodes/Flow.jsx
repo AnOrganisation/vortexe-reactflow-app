@@ -41,6 +41,10 @@ function Flow() {
       onConnect={onConnect}
       defaultEdgeOptions={defaultEdgeOptions}
       fitView={true}
+      zoomOnDoubleClick={false}
+      panOnScroll={true}
+      panOnDrag={false}
+      zoomOnScroll={false}
     ></ReactFlow>
   );
 }

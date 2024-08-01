@@ -33,23 +33,23 @@ const CommandBar = () => {
     ["Add Refs", "Add references"],
   ]);
 
-  const initialWorkflows = [
-    "Workflow 1",
-    "Workflow 2",
-    "Workflow 3",
-    "Workflow 4",
-    "Workflow 5",
-    "Workflow 6",
-    "Workflow 7",
-    "Workflow 8",
-    "Workflow 9",
-    "Workflow 10",
-    "Workflow 11",
-    "Workflow 12",
-    "Workflow 13",
-    "Workflow 14",
-    "Workflow 15",
-  ];
+  const initialWorkflows = new Map([
+    ["Workflow 1", ["Task 1", "Task 2"]],
+    ["Workflow 2", ["Task 1", "Task 2"]],
+    ["Workflow 3", ["Task 1", "Task 2"]],
+    ["Workflow 4", ["Task 1", "Task 2"]],
+    ["Workflow 5", ["Task 1", "Task 2"]],
+    ["Workflow 6", ["Task 1", "Task 2"]],
+    ["Workflow 7", ["Task 1", "Task 2"]],
+    ["Workflow 8", ["Task 1", "Task 2"]],
+    ["Workflow 9", ["Task 1", "Task 2"]],
+    ["Workflow 10", ["Task 1", "Task 2"]],
+    ["Workflow 11", ["Task 1", "Task 2"]],
+    ["Workflow 12", ["Task 1", "Task 2"]],
+    ["Workflow 13", ["Task 1", "Task 2"]],
+    ["Workflow 14", ["Task 1", "Task 2"]],
+    ["Workflow 15", ["Task 1", "Task 2"]],
+  ]);
 
   const [workflows, setWorkflows] = useState(initialWorkflows);
   // State to store the filtered commands
@@ -61,6 +61,9 @@ const CommandBar = () => {
 
   // State to track the custom actions
   const [customActions, setCustomActions] = useState(new Map());
+
+  // State to track the custom workflows
+  const [customWorkflows, setCustomWorkflows] = useState(new Map());
 
   useEffect(() => {
     if (customActions.size !== 0) {
@@ -75,12 +78,24 @@ const CommandBar = () => {
   }, [customActions]);
 
   useEffect(() => {
+    if (customWorkflows.size !== 0) {
+      setWorkflows((prevWorkflows) => {
+        const newWorkflows = new Map(prevWorkflows);
+        customWorkflows.forEach((value, key) => {
+          newWorkflows.set(key, value);
+        });
+        return newWorkflows;
+      });
+    }
+  }, [customWorkflows]);
+
+  useEffect(() => {
     // Filter commands based on the search query
     if (searchQuery === "") {
       if (activeButton === "Commands") {
         setCommands(new Map([...initialCommands, ...customActions]));
       } else {
-        setWorkflows(initialWorkflows);
+        setWorkflows(new Map([...initialWorkflows, ...customWorkflows]));
       }
     } else {
       if (activeButton === "Commands") {
@@ -91,13 +106,15 @@ const CommandBar = () => {
         );
         setCommands(filteredCommands);
       } else {
-        const filteredWorkflows = initialWorkflows.filter((workflow) =>
-          workflow.toLowerCase().includes(searchQuery.toLowerCase())
+        const filteredWorkflows = new Map(
+          [...initialWorkflows, ...customWorkflows].filter(([key, value]) =>
+            key.toLowerCase().includes(searchQuery.toLowerCase())
+          )
         );
         setWorkflows(filteredWorkflows);
       }
     }
-  }, [searchQuery, activeButton, customActions]);
+  }, [searchQuery, activeButton, customActions, customWorkflows]);
 
   /**
    * Handles button clicks to set the active button state.
@@ -141,15 +158,15 @@ const CommandBar = () => {
         {activeButton === "Commands" ? (
           <CustomActionBtn setCustomAction={setCustomActions} />
         ) : (
-          <CustomWorkflowBtn />
+          <CustomWorkflowBtn setCustomWorkflow={setCustomWorkflows} />
         )}
         <div className="mb-3 space-y-2 overflow-y-auto max-h-96 custom-scrollbar">
           {activeButton === "Commands"
             ? Array.from(commands).map(([key, value], index) => (
                 <Command key={index} commandName={key} prompt={value} />
               ))
-            : workflows.map((workflow, index) => (
-                <Workflow key={index} workflow={workflow} />
+            : Array.from(workflows).map(([key, value], index) => (
+                <Workflow key={index} workflowName={key} actions={value} />
               ))}
         </div>
       </div>

@@ -13,17 +13,21 @@ import { v4 as uuidv4 } from "uuid";
 
 import NumberInput from "./NumberInput.jsx";
 import ColorPreview from "./ColorPreview.jsx";
-import FileNode from "./FileNode.jsx";
+import ActionNode from "./components/nodes/ActionNode.jsx";
+import FileNode from "./components/nodes/FileNode.jsx";
 
 import Navbar from "./components/ui/nav/Navbar.jsx";
 import CommandBar from "./components/ui/command-bar/CommandBar.jsx";
 import ChatBubble from "./components/ui/ChatBubble.jsx";
+
+import Flow from "./components/nodes/Flow.jsx";
 
 import "./style.css";
 
 const nodeTypes = {
   NumberInput,
   ColorPreview,
+  ActionNode,
   FileNode,
 };
 
@@ -51,6 +55,12 @@ const initialNodes = [
     id: "color",
     position: { x: 150, y: 50 },
     data: { label: "Color" },
+  },
+  {
+    type: "FileNode",
+    id: "1-file",
+    position: { x: 300, y: 100 },
+    data: { label: "Invoices.xlsx" },
   },
 ];
 
@@ -105,15 +115,15 @@ const App = () => {
     console.log("Clicked");
     //TODO: add a new node to the nodes array
     // Define the new node
-    const newFileNode = {
+    const newActionNode = {
       id: uuidv4(), // Generate a unique id
-      type: "FileNode", // Type of node
+      type: "ActionNode", // Type of node
       data: { label: `New Node`, value: 0 },
       position: { x: Math.random() * 400, y: Math.random() * 400 }, // Random position
     };
     // Find the last node of the same type
     const lastNode = nodes
-      .filter((node) => node.type === "FileNode")
+      .filter((node) => node.type === "ActionNode")
       .slice(-1)[0];
 
     // Define the new edge, if there is a last node of the same type
@@ -121,12 +131,12 @@ const App = () => {
       ? {
           id: uuidv4(), // Generate a unique id for the edge
           source: lastNode.id,
-          target: newFileNode.id,
+          target: newActionNode.id,
         }
       : null;
 
     // Add the new node to the nodes array
-    setNodes((nds) => [...nds, newFileNode]);
+    setNodes((nds) => [...nds, newActionNode]);
 
     // Add the new edge to the edges array if it exists
     if (newEdge) {
@@ -146,6 +156,7 @@ const App = () => {
       >
         Add
       </button>
+      {/* <Flow /> */}
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
