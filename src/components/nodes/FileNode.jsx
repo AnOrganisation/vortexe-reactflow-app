@@ -5,12 +5,10 @@ import {
   CardBody,
   CardFooter,
   Divider,
-  Link,
   Image,
-  Button,
 } from "@nextui-org/react";
-import { useCallback, useState } from "react";
-import { Handle, Position } from "@xyflow/react";
+import { useState } from "react";
+import PDFIcon from "../../assets/pdf.png";
 
 function FileNode({ id, data }) {
   // FileNode implementation goes here
@@ -23,13 +21,13 @@ function FileNode({ id, data }) {
   };
 
   return (
-    <Card className="max-w-[150px] max-h-[250px] bg-slate-300 nodrag">
-      <CardHeader className="flex gap-3">
+    <Card className="max-w-[150px] max-h-[250px] bg-slate-300 bg-opacity-70 ">
+      <CardHeader className="flex gap-3 cursor-pointer">
         <Image
           alt="nextui logo"
           height={40}
           radius="sm"
-          src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+          src={PDFIcon}
           width={40}
         />
         <div className="flex flex-col">

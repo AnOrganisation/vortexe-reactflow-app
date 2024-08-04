@@ -1,20 +1,47 @@
-import { useCallback, useState } from "react";
-import {
-  ReactFlow,
-  applyEdgeChanges,
-  applyNodeChanges,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-} from "@xyflow/react";
+import { ReactFlow, Background } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import initialNodes from "./Nodes.jsx";
-import initialEdges from "./Edges.jsx";
+const initialNodes = [
+  {
+    id: "1",
+    type: "ActionNode",
+    data: { label: "Excel Sheet" },
+    position: { x: 100, y: 25 },
+  },
 
-function Flow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  {
+    id: "2",
+    type: "ActionNode",
+    data: { label: "Simplify" },
+    position: { x: 100, y: 125 },
+  },
+  {
+    id: "3",
+    type: "ActionNode",
+    data: { label: "Result" },
+    position: { x: 100, y: 250 },
+  },
+];
+
+const initialEdges = [
+  { id: "e1-2", source: "1", target: "2" },
+  {
+    id: "e2-3",
+    source: "2",
+    target: "3",
+    animated: true,
+  },
+];
+
+function Flow({
+  nodeTypes,
+  nodes,
+  edges,
+  onNodesChange,
+  onEdgesChange,
+  onConnect,
+  onNodesDelete,
+}) {
   //[edge1, edge21, edge3, edge4,...]
   // const onNodesChange = useCallback(
   //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -25,18 +52,15 @@ function Flow() {
   //   [setEdges]
   // );
 
-  const onConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
-  );
-
   const defaultEdgeOptions = { animated: true };
 
   return (
     <ReactFlow
+      nodeTypes={nodeTypes}
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
+      onNodesDelete={onNodesDelete}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       defaultEdgeOptions={defaultEdgeOptions}
@@ -45,7 +69,9 @@ function Flow() {
       panOnScroll={true}
       panOnDrag={false}
       zoomOnScroll={false}
-    ></ReactFlow>
+    >
+      <Background variant="cross" />
+    </ReactFlow>
   );
 }
 

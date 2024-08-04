@@ -1,4 +1,5 @@
 import React from "react";
+import { Image } from "@nextui-org/react";
 import { useCallback, useState } from "react";
 import {
   ReactFlow,
@@ -9,7 +10,6 @@ import {
   Background,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { v4 as uuidv4 } from "uuid";
 
 import NumberInput from "./NumberInput.jsx";
 import ColorPreview from "./ColorPreview.jsx";
@@ -19,8 +19,7 @@ import FileNode from "./components/nodes/FileNode.jsx";
 import Navbar from "./components/ui/nav/Navbar.jsx";
 import CommandBar from "./components/ui/command-bar/CommandBar.jsx";
 import ChatBubble from "./components/ui/ChatBubble.jsx";
-
-import Flow from "./components/nodes/Flow.jsx";
+import Logo from "./assets/VortexeLogo.png";
 
 import "./style.css";
 
@@ -32,57 +31,57 @@ const nodeTypes = {
 };
 
 const initialNodes = [
-  {
-    type: "NumberInput",
-    id: "1",
-    data: { label: "Red", value: 255 },
-    position: { x: 0, y: 0 },
-  },
-  {
-    type: "NumberInput",
-    id: "2",
-    data: { label: "Green", value: 0 },
-    position: { x: 0, y: 100 },
-  },
-  {
-    type: "NumberInput",
-    id: "3",
-    data: { label: "Blue", value: 115 },
-    position: { x: 0, y: 200 },
-  },
-  {
-    type: "ColorPreview",
-    id: "color",
-    position: { x: 150, y: 50 },
-    data: { label: "Color" },
-  },
+  // {
+  //   type: "NumberInput",
+  //   id: "1",
+  //   data: { label: "Red", value: 255 },
+  //   position: { x: 0, y: 0 },
+  // },
+  // {
+  //   type: "NumberInput",
+  //   id: "2",
+  //   data: { label: "Green", value: 0 },
+  //   position: { x: 0, y: 100 },
+  // },
+  // {
+  //   type: "NumberInput",
+  //   id: "3",
+  //   data: { label: "Blue", value: 115 },
+  //   position: { x: 0, y: 200 },
+  // },
+  // {
+  //   type: "ColorPreview",
+  //   id: "color",
+  //   position: { x: 150, y: 50 },
+  //   data: { label: "Color" },
+  // },
   {
     type: "FileNode",
     id: "1-file",
     position: { x: 300, y: 100 },
-    data: { label: "Invoices.xlsx" },
+    data: { label: "Invoices.pdf" },
   },
 ];
 
 const initialEdges = [
-  {
-    id: "1-color",
-    source: "1",
-    target: "color",
-    targetHandle: "red",
-  },
-  {
-    id: "2-color",
-    source: "2",
-    target: "color",
-    targetHandle: "green",
-  },
-  {
-    id: "3-color",
-    source: "3",
-    target: "color",
-    targetHandle: "blue",
-  },
+  // {
+  //   id: "1-color",
+  //   source: "1",
+  //   target: "color",
+  //   targetHandle: "red",
+  // },
+  // {
+  //   id: "2-color",
+  //   source: "2",
+  //   target: "color",
+  //   targetHandle: "green",
+  // },
+  // {
+  //   id: "3-color",
+  //   source: "3",
+  //   target: "color",
+  //   targetHandle: "blue",
+  // },
 ];
 
 const App = () => {
@@ -104,59 +103,15 @@ const App = () => {
     []
   );
 
-  /**
-   * Handles the click event to add a new node and potentially a new edge to the graph.
-   *
-   * @param {string} name - The name of the command to be displayed on the new node.
-   * @param {string} type - The type of the node to be added.
-   */
-  //send command name here to be displayed on the newnode
-  const handleClick = (name, type) => {
-    console.log("Clicked");
-    //TODO: add a new node to the nodes array
-    // Define the new node
-    const newActionNode = {
-      id: uuidv4(), // Generate a unique id
-      type: "ActionNode", // Type of node
-      data: { label: `New Node`, value: 0 },
-      position: { x: Math.random() * 400, y: Math.random() * 400 }, // Random position
-    };
-    // Find the last node of the same type
-    const lastNode = nodes
-      .filter((node) => node.type === "ActionNode")
-      .slice(-1)[0];
-
-    // Define the new edge, if there is a last node of the same type
-    const newEdge = lastNode
-      ? {
-          id: uuidv4(), // Generate a unique id for the edge
-          source: lastNode.id,
-          target: newActionNode.id,
-        }
-      : null;
-
-    // Add the new node to the nodes array
-    setNodes((nds) => [...nds, newActionNode]);
-
-    // Add the new edge to the edges array if it exists
-    if (newEdge) {
-      setEdges((eds) => [...eds, newEdge]);
-    }
-  };
-
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <div className="relative flex flex-row items-center justify-center w-full">
         <Navbar />
       </div>
       <CommandBar />
-      <button
-        className="absolute left-0 z-20 mt-4 ml-4 cursor-pointer"
-        onClick={handleClick}
-      >
-        Add
-      </button>
-      {/* <Flow /> */}
+      <div className="absolute left-0 z-20 mt-5 ml-4">
+        <Image src={Logo} alt="Vortexe Logo" className="w-10 h-10"></Image>
+      </div>
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}

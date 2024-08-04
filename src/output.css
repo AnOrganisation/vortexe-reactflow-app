@@ -1039,10 +1039,6 @@ video {
   margin-top: 0.75rem;
 }
 
-.mt-4 {
-  margin-top: 1rem;
-}
-
 .mt-5 {
   margin-top: 1.25rem;
 }
@@ -1227,10 +1223,6 @@ video {
 
 .h-9 {
   height: 2.25rem;
-}
-
-.h-96 {
-  height: 24rem;
 }
 
 .h-\[100dvh\] {
@@ -1542,10 +1534,6 @@ video {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[1px\] {
-  width: 1px;
 }
 
 .min-w-10 {
@@ -3306,11 +3294,6 @@ video {
   background-color: hsl(var(--nextui-background) / 0.8);
 }
 
-.bg-blue-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(59 130 246 / var(--tw-bg-opacity));
-}
-
 .bg-content1 {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--nextui-content1) / var(--nextui-content1-opacity, var(--tw-bg-opacity)));
@@ -3471,6 +3454,10 @@ video {
 
 .bg-opacity-40 {
   --tw-bg-opacity: 0.4;
+}
+
+.bg-opacity-70 {
+  --tw-bg-opacity: 0.7;
 }
 
 .bg-stripe-gradient {
@@ -8826,11 +8813,6 @@ video {
   background-color: rgb(99 102 241 / var(--tw-bg-opacity));
 }
 
-.hover\:bg-blue-700:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(29 78 216 / var(--tw-bg-opacity));
-}
-
 .hover\:bg-danger-100:hover {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--nextui-danger-100) / var(--nextui-danger-100-opacity, var(--tw-bg-opacity)));
@@ -8912,12 +8894,12 @@ video {
   opacity: 1;
 }
 
-.hover\:opacity-80:hover {
-  opacity: 0.8;
-}
-
 .hover\:opacity-60:hover {
   opacity: 0.6;
+}
+
+.hover\:opacity-80:hover {
+  opacity: 0.8;
 }
 
 .before\:hover\:text-center:hover::before {

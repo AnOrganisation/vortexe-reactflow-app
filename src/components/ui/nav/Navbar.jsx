@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Button, Image } from "@nextui-org/react";
+import React from "react";
 import UploadButton from "./nav-items/UploadButton";
 import WorkspaceMenu from "./nav-items/WorkspaceMenu";
 import ProfileSettings from "./nav-items/ProfileSettings";

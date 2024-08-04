@@ -169,7 +169,12 @@ const CommandBar = () => {
                 <Command key={index} commandName={key} prompt={value} />
               ))
             : Array.from(workflows).map(([key, value], index) => (
-                <Workflow key={index} workflowName={key} actions={value} />
+                <Workflow
+                  key={index}
+                  workflowName={key}
+                  actionList={value}
+                  commands={commands}
+                />
               ))}
         </div>
       </div>

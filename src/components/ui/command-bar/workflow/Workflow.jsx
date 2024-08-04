@@ -1,11 +1,15 @@
 import React from "react";
 import { Button } from "@nextui-org/react";
 
-const Workflow = ({ workflowName, actions }) => {
+const Workflow = ({ workflowName, actionList, commands }) => {
   const handlePress = () => {
     console.log(`Executing workflow: ${workflowName}`);
-    actions.forEach((action) => {
+    actionList.forEach((action) => {
       console.log(` with action: ${action}`);
+      Array.from(commands).map(
+        ([key, value]) =>
+          key === action ? console.log(`  with prompt: ${value}`) : null // only log prompt if action matches command key
+      );
     });
   };
   return (
