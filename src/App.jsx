@@ -60,7 +60,7 @@ const initialNodes = [
     id: "1-file",
     position: { x: 300, y: 100 },
     data: {
-      label: "InvoicesAAAAAAAAADDDDDDDDD.pdf",
+      label: "InvoicesAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.pdf",
     },
   },
 ];
