@@ -24,17 +24,17 @@ import ActionNode from "../../../nodes/ActionNode";
 const CustomWorkflowBtn = ({ setCustomWorkflow, commands }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  //State to store the custom action name
+  // State to store the custom action name
   const [customWorkflowName, setCustomWorkflowName] = useState("");
 
-  //State to store if the custom action name is invalid
+  // State to store if the custom action name is invalid
   const [customWorkflowNameInvalid, setCustomWorkflowNameInvalid] =
     useState(false);
 
   // State to track the search query
   const [searchQuery, setSearchQuery] = useState("");
 
-  //State to track all actions in the command map
+  // State to track all actions in the command map
   const [allActions, setAllActions] = useState(new Map());
 
   const nodeTypes = {
@@ -88,7 +88,7 @@ const CustomWorkflowBtn = ({ setCustomWorkflow, commands }) => {
     }
   }, [searchQuery, commands]);
 
-  //Function to handle the opening of the modal
+  // Function to handle the opening of the modal
   const handleOpen = () => {
     onOpen();
   };
@@ -107,7 +107,7 @@ const CustomWorkflowBtn = ({ setCustomWorkflow, commands }) => {
       // Reset action list
       const newActionList = [];
 
-      //iterate through nodes, for each node, based on the label, lookup the associated key in the allActions map, and retrieve its value and add it to action List
+      // Iterate through nodes, for each node, based on the label, lookup the associated key in the allActions map, and retrieve its value and add it to actionList
       nodes.forEach((node) => {
         const label = node.data.label;
         newActionList.push(label);
@@ -129,6 +129,14 @@ const CustomWorkflowBtn = ({ setCustomWorkflow, commands }) => {
 
       // Close the modal when the workflow is saved
       onClose();
+    }
+  };
+
+  // Custom keydown handler to prevent backspace from deleting nodes
+  const handleKeyDown = (event) => {
+    if (event.key === "Backspace") {
+      event.stopPropagation();
+      event.preventDefault();
     }
   };
 
@@ -207,6 +215,7 @@ const CustomWorkflowBtn = ({ setCustomWorkflow, commands }) => {
                     onNodesDelete={onNodesDelete}
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
+                    onKeyDown={handleKeyDown}
                   />
                 </div>
               </ModalBody>

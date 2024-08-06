@@ -41,6 +41,7 @@ function Flow({
   onEdgesChange,
   onConnect,
   onNodesDelete,
+  onKeyDown,
 }) {
   //[edge1, edge21, edge3, edge4,...]
   // const onNodesChange = useCallback(
@@ -69,6 +70,7 @@ function Flow({
       panOnScroll={true}
       panOnDrag={false}
       zoomOnScroll={false}
+      onKeyDown={onKeyDown}
     >
       <Background variant="cross" />
     </ReactFlow>

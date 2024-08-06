@@ -59,7 +59,9 @@ const initialNodes = [
     type: "FileNode",
     id: "1-file",
     position: { x: 300, y: 100 },
-    data: { label: "Invoices.pdf" },
+    data: {
+      label: "InvoicesAAAAAAAAADDDDDDDDD.pdf",
+    },
   },
 ];
 
@@ -98,6 +100,15 @@ const App = () => {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  // Custom keydown handler to prevent backspace from deleting nodes
+  const handleKeyDown = (event) => {
+    if (event.key === "Backspace") {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  };
+
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
     []
@@ -119,6 +130,7 @@ const App = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onKeyDown={handleKeyDown}
         selectionKeyCode={16} // Shift key
         multiSelectionKeyCode={17} // Ctrl key
         fitView
