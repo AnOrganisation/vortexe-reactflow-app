@@ -4,6 +4,7 @@ import Workflow from "./workflow/Workflow";
 import { Button } from "@nextui-org/react";
 import CustomWorkflowBtn from "./workflow/CustomWorkflowBtn";
 import CustomActionBtn from "./action/CustomActionBtn";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * CommandBar component renders a UI element that allows users to interact with a list of commands.
@@ -166,12 +167,18 @@ const CommandBar = () => {
         <div className="mb-3 space-y-2 overflow-y-auto max-h-96 custom-scrollbar">
           {activeButton === "Commands"
             ? Array.from(commands).map(([key, value], index) => (
-                <Command key={index} commandName={key} prompt={value} />
+                <Command
+                  key={index}
+                  commandName={key}
+                  prompt={value}
+                  commandID={`commandBar-` + uuidv4()}
+                />
               ))
             : Array.from(workflows).map(([key, value], index) => (
                 <Workflow
                   key={index}
                   workflowName={key}
+                  workflowID={uuidv4()}
                   actionList={value}
                   commands={commands}
                 />

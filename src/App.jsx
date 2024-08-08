@@ -1,6 +1,6 @@
 import React from "react";
 import { Image } from "@nextui-org/react";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import {
   ReactFlow,
   useNodesState,
@@ -10,6 +10,8 @@ import {
   Background,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import axios from "axios";
+import { generatePDF } from "./pdfGenerator";
 
 import NumberInput from "./NumberInput.jsx";
 import ColorPreview from "./ColorPreview.jsx";
@@ -30,40 +32,46 @@ const nodeTypes = {
   FileNode,
 };
 
-const initialNodes = [
-  // {
-  //   type: "NumberInput",
-  //   id: "1",
-  //   data: { label: "Red", value: 255 },
-  //   position: { x: 0, y: 0 },
-  // },
-  // {
-  //   type: "NumberInput",
-  //   id: "2",
-  //   data: { label: "Green", value: 0 },
-  //   position: { x: 0, y: 100 },
-  // },
-  // {
-  //   type: "NumberInput",
-  //   id: "3",
-  //   data: { label: "Blue", value: 115 },
-  //   position: { x: 0, y: 200 },
-  // },
-  // {
-  //   type: "ColorPreview",
-  //   id: "color",
-  //   position: { x: 150, y: 50 },
-  //   data: { label: "Color" },
-  // },
-  {
-    type: "FileNode",
-    id: "1-file",
-    position: { x: 300, y: 100 },
-    data: {
-      label: "InvoicesAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.pdf",
-    },
-  },
-];
+const initialNodes = (onNodeClick, activeNodeID) => {
+  return [
+    // {
+    //   type: "NumberInput",
+    //   id: "1",
+    //   data: { label: "Red", value: 255 },
+    //   position: { x: 0, y: 0 },
+    // },
+    // {
+    //   type: "NumberInput",
+    //   id: "2",
+    //   data: { label: "Green", value: 0 },
+    //   position: { x: 0, y: 100 },
+    // },
+    // {
+    //   type: "NumberInput",
+    //   id: "3",
+    //   data: { label: "Blue", value: 115 },
+    //   position: { x: 0, y: 200 },
+    // },
+    // {
+    //   type: "ColorPreview",
+    //   id: "color",
+    //   position: { x: 150, y: 50 },
+    //   data: { label: "Color" },
+    // },
+    // {
+    //   type: "FileNode",
+    //   id: "1-file",
+    //   position: { x: 300, y: 100 },
+    //   data: {
+    //     label: "InvoicesAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.pdf",
+    //     file: null,
+    //     content: null,
+    //     onNodeClick,
+    //     activeNodeID,
+    //   },
+    // },
+  ];
+};
 
 const initialEdges = [
   // {
@@ -98,8 +106,17 @@ const App = () => {
     }
   };
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  //State for active file content
+  const [activeFileContent, setActiveFileContent] = useState(undefined);
+
+  //State to track the clicked node
+  const [activeNodeID, setActiveNodeID] = useState(undefined);
+
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  console.log("nodes", nodes);
 
   // Custom keydown handler to prevent backspace from deleting nodes
   const handleKeyDown = (event) => {
@@ -114,10 +131,65 @@ const App = () => {
     []
   );
 
+  const onNodeClick = (fileId) => {
+    const node = nodes.find((node) => node.id === fileId);
+    console.log("nodes", nodes);
+    console.log("fileID", fileId);
+    const activeNodeID = node.id;
+    //setNodes(nodes.map((n) => (n.id === activeNodeID ? node : n)));
+    setActiveFileContent(node.data.content);
+    setActiveNodeID(activeNodeID);
+    console.log("activeNodeID", activeNodeID);
+  };
+
+  const onUpload = async (formData) => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("Success:", response.data.content);
+
+      // Generate PDF from the raw content
+      const pdfUrl = await generatePDF(response.data.content);
+
+      // Find the last node of the same type
+      const lastNode = nodes
+        .filter((node) => node.type === "FileNode")
+        .slice(-1)[0];
+
+      // Calculate the new x-position for the new node based on the last node's position
+      const newXPosition = lastNode ? lastNode.position.x + 150 : 0;
+
+      const newNodes = [...nodes];
+      const newNode = {
+        type: "FileNode",
+        id: response.data.file_id,
+        position: { x: newXPosition, y: 100 },
+        data: {
+          label: response.data.filename,
+          file: pdfUrl,
+          content: response.data.content,
+          onNodeClick,
+          activeNodeID,
+        },
+      };
+      newNodes.push(newNode);
+      setNodes(newNodes);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <div className="relative flex flex-row items-center justify-center w-full">
-        <Navbar />
+        <Navbar onUpload={onUpload} />
       </div>
       <CommandBar />
       <div className="absolute left-0 z-20 mt-5 ml-4">
@@ -131,8 +203,6 @@ const App = () => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onKeyDown={handleKeyDown}
-        selectionKeyCode={16} // Shift key
-        multiSelectionKeyCode={17} // Ctrl key
         fitView
       >
         <Background variant="dots" />

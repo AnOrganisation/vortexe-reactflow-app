@@ -1,9 +1,9 @@
 import React from "react";
 import { Button } from "@nextui-org/react";
 
-const Workflow = ({ workflowName, actionList, commands }) => {
+const Workflow = ({ workflowName, actionList, commands, workflowID }) => {
   const handlePress = () => {
-    console.log(`Executing workflow: ${workflowName}`);
+    console.log(`Executing workflow: ${workflowName} with id: ${workflowID}`);
     actionList.forEach((action) => {
       console.log(` with action: ${action}`);
       Array.from(commands).map(

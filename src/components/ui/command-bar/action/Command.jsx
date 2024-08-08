@@ -9,11 +9,13 @@ const Command = ({
   setNodes,
   setEdges,
   onNodesDelete,
+  commandID,
 }) => {
   const handlePress = () => {
     if (isActivatedFromCustomWorkflowModal) {
-      console.log(`Adding command: ${commandName} with prompt: ${prompt}`);
-      // TODO: add the command to the workflow area
+      console.log(
+        `Adding command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
+      );
 
       // Find the last node of the same type
       const lastNode = nodes
@@ -52,7 +54,9 @@ const Command = ({
         setEdges((eds) => [...eds, newEdge]);
       }
     } else {
-      console.log(`Executing command: ${commandName} with prompt: ${prompt}`);
+      console.log(
+        `Executing command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
+      );
     }
   };
   return (

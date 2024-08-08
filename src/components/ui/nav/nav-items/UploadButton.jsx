@@ -1,9 +1,23 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Button } from "@nextui-org/react";
-const UploadButton = () => {
+
+const UploadButton = ({ onUpload }) => {
+  const inputRef = useRef(null);
+
+  const handleFileChange = (event) => {
+    let selectedFile = event.target.files[0];
+
+    const formData = new FormData();
+    formData.append("user_id", "default_user");
+    formData.append("file", selectedFile);
+    formData.append("workflow_id", "wrk1");
+    onUpload(formData);
+  };
+
   return (
     <Button
       radius="full"
+      type="submit"
       className="w-[100px] h-[28px] bg-[#6366F1] text-white focus:outline-none"
     >
       <p>Upload</p>
@@ -21,6 +35,12 @@ const UploadButton = () => {
           d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
         />
       </svg>
+      <input
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        type="file"
+        ref={inputRef}
+        onChange={handleFileChange}
+      />
     </Button>
   );
 };

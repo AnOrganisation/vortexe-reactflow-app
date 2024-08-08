@@ -20,6 +20,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Flow from "../../../nodes/Flow";
 import Command from "../action/Command";
 import ActionNode from "../../../nodes/ActionNode";
+import { v4 as uuidv4 } from "uuid";
 
 const CustomWorkflowBtn = ({ setCustomWorkflow, commands }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -194,6 +195,7 @@ const CustomWorkflowBtn = ({ setCustomWorkflow, commands }) => {
                         <Command
                           key={index}
                           commandName={key}
+                          commandID={`workflow-` + uuidv4()}
                           prompt={value}
                           isActivatedFromCustomWorkflowModal={true}
                           nodes={nodes}
