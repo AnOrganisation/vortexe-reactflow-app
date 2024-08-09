@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from "uuid";
  *
  * @returns {JSX.Element} The rendered CommandBar component.
  */
-const CommandBar = () => {
+const CommandBar = ({ activeFileContent }) => {
   const initialCommands = new Map([
     ["Simplify", "Simplify the text"],
     ["Summarize", "Summarize the content"],
@@ -172,6 +172,7 @@ const CommandBar = () => {
                   commandName={key}
                   prompt={value}
                   commandID={`commandBar-` + uuidv4()}
+                  activeFileContent={activeFileContent}
                 />
               ))
             : Array.from(workflows).map(([key, value], index) => (

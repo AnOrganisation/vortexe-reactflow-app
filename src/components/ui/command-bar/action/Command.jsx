@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@nextui-org/react";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 const Command = ({
   commandName,
   prompt,
@@ -10,7 +11,21 @@ const Command = ({
   setEdges,
   onNodesDelete,
   commandID,
+  activeFileContent,
 }) => {
+  const runCommand = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:8001/custom", {
+        content: activeFileContent,
+        summary_length: 0,
+        prompt: prompt,
+      });
+      console.log("Success:", response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handlePress = () => {
     if (isActivatedFromCustomWorkflowModal) {
       console.log(
@@ -57,6 +72,7 @@ const Command = ({
       console.log(
         `Executing command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
       );
+      runCommand();
     }
   };
   return (

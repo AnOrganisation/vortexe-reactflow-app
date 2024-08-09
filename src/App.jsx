@@ -102,7 +102,7 @@ const App = () => {
       case "output":
         return "#6865A5";
       default:
-        return "#ff0072";
+        return "#6366F1";
     }
   };
 
@@ -110,13 +110,10 @@ const App = () => {
   const [activeFileContent, setActiveFileContent] = useState(undefined);
 
   //State to track the clicked node
-  const [activeNodeID, setActiveNodeID] = useState(undefined);
+  // const [activeNodeID, setActiveNodeID] = useState(undefined);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
-
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-
-  console.log("nodes", nodes);
 
   // Custom keydown handler to prevent backspace from deleting nodes
   const handleKeyDown = (event) => {
@@ -131,15 +128,17 @@ const App = () => {
     []
   );
 
-  const onNodeClick = (fileId) => {
-    const node = nodes.find((node) => node.id === fileId);
-    console.log("nodes", nodes);
-    console.log("fileID", fileId);
-    const activeNodeID = node.id;
-    //setNodes(nodes.map((n) => (n.id === activeNodeID ? node : n)));
+  const onNodeClick = (event, node) => {
+    setNodes((nds) =>
+      nds.map((n) => ({
+        ...n,
+        data: {
+          ...n.data,
+          isNodeActive: n.id === node.id,
+        },
+      }))
+    );
     setActiveFileContent(node.data.content);
-    setActiveNodeID(activeNodeID);
-    console.log("activeNodeID", activeNodeID);
   };
 
   const onUpload = async (formData) => {
@@ -153,7 +152,7 @@ const App = () => {
           },
         }
       );
-      console.log("Success:", response.data.content);
+      console.log("Success:");
 
       // Generate PDF from the raw content
       const pdfUrl = await generatePDF(response.data.content);
@@ -175,8 +174,7 @@ const App = () => {
           label: response.data.filename,
           file: pdfUrl,
           content: response.data.content,
-          onNodeClick,
-          activeNodeID,
+          isNodeActive: false,
         },
       };
       newNodes.push(newNode);
@@ -191,7 +189,7 @@ const App = () => {
       <div className="relative flex flex-row items-center justify-center w-full">
         <Navbar onUpload={onUpload} />
       </div>
-      <CommandBar />
+      <CommandBar activeFileContent={activeFileContent} />
       <div className="absolute left-0 z-20 mt-5 ml-4">
         <Image src={Logo} alt="Vortexe Logo" className="w-10 h-10"></Image>
       </div>
@@ -203,6 +201,7 @@ const App = () => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onKeyDown={handleKeyDown}
+        onNodeClick={onNodeClick}
         fitView
       >
         <Background variant="dots" />
