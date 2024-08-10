@@ -12,7 +12,16 @@ import { v4 as uuidv4 } from "uuid";
  *
  * @returns {JSX.Element} The rendered CommandBar component.
  */
-const CommandBar = ({ activeFileContent }) => {
+const CommandBar = ({
+  activeFileContent,
+  activeNodeID,
+  fileNodes,
+  setFileNodes,
+  setFileEdges,
+  setAlert,
+  setAlertMessage,
+  setAlertType,
+}) => {
   const initialCommands = new Map([
     ["Simplify", "Simplify the text"],
     ["Summarize", "Summarize the content"],
@@ -173,6 +182,13 @@ const CommandBar = ({ activeFileContent }) => {
                   prompt={value}
                   commandID={`commandBar-` + uuidv4()}
                   activeFileContent={activeFileContent}
+                  activeNodeID={activeNodeID}
+                  fileNodes={fileNodes}
+                  setFileNodes={setFileNodes}
+                  setFileEdges={setFileEdges}
+                  setAlert={setAlert}
+                  setAlertMessage={setAlertMessage}
+                  setAlertType={setAlertType}
                 />
               ))
             : Array.from(workflows).map(([key, value], index) => (
@@ -182,6 +198,10 @@ const CommandBar = ({ activeFileContent }) => {
                   workflowID={uuidv4()}
                   actionList={value}
                   commands={commands}
+                  activeFileContent={activeFileContent}
+                  setAlert={setAlert}
+                  setAlertMessage={setAlertMessage}
+                  setAlertType={setAlertType}
                 />
               ))}
         </div>

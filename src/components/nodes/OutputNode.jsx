@@ -7,79 +7,97 @@ import {
   Divider,
   Image,
   Tooltip,
+  Textarea,
   Badge,
+  Button,
 } from "@nextui-org/react";
 import { Handle, Position } from "@xyflow/react";
-import { useState } from "react";
-import PDFIcon from "../../assets/pdf.png";
-import PDF from "../../assets/SOLICITATION_RFB-IS-24201409.pdf";
+import { useState, useRef } from "react";
+import "../../style.css";
 
-function FileNode({ id, data }) {
+function OutputNode({ id, data }) {
   const [isNodeExpanded, setIsNodeExpanded] = useState(false);
+  const textareaRef = useRef(null);
+  const [showAlert, setShowAlert] = useState(false); // State to show/hide alert
+
   const handleExpandClick = () => {
     setIsNodeExpanded(!isNodeExpanded);
-    setShowTooltip(!showTooltip);
   };
 
-  const newFileName =
-    data.label.length > 12 ? data.label.substring(0, 12) + ".." : data.label;
+  // Prevent dragging when interacting with the Textarea
+  const preventDrag = (e) => {
+    e.stopPropagation();
+  };
 
-  const [showTooltip, setShowTooltip] = useState(
-    !(data.label.length - 1 > 12) && !isNodeExpanded
-  );
-  // console.log("id", id);
-  // console.log("data.activeNodeID", data.activeNodeID);
+  const handleCopyClick = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      navigator.clipboard.writeText(textarea.value).then(
+        () => {
+          setShowAlert(true); // Show alert on successful copy
+          setTimeout(() => setShowAlert(false), 3000); // Hide alert after 3 seconds
+        },
+        (err) => {
+          console.error("Failed to copy to clipboard:", err);
+        }
+      );
+    }
+  };
 
   return (
-    <Badge showOutline="false" content="File" size="sm" color="danger">
-      <Tooltip
-        isDisabled={showTooltip}
-        color="foreground"
-        delay={1000}
-        content={
-          <div className="px-1 py-2">
-            <div className="font-bold text-white text-small">{data.label}</div>
-          </div>
-        }
+    <>
+      {showAlert && (
+        <div className="fixed z-30 p-2 text-white bg-green-500 rounded-lg shadow-lg bottom-5 right-16">
+          Copied to clipboard
+        </div>
+      )}
+      <Badge
+        showOutline="false"
+        content={`${data.label}`}
+        size="sm"
+        color="secondary"
       >
         <Card
-          className={`max-w-[1000px] max-h-[1000px] bg-slate-300 bg-opacity-70 ${
+          className={`max-w-[1000px] max-h-[1000px] min-w-[224px] min-h-16 bg-slate-300 bg-opacity-70 ${
             data.isNodeActive
-              ? "border-2 border-blue-500 border-opacity-100"
+              ? "border-3 border-blue-500 border-opacity-100"
               : ""
           }`}
         >
-          <CardHeader className="flex gap-3 cursor-pointer">
+          <CardHeader className="flex flex-row justify-between cursor-pointer">
             <div className="flex-shrink-0">
-              <Image
-                alt="nextui logo"
-                height={40}
-                radius="sm"
-                src={PDFIcon}
-                width={40}
-              />
-            </div>
-            <div className="flex flex-col">
-              <p className="font-semibold text-black text-md">
-                {isNodeExpanded ? data.label : newFileName}
-              </p>
+              <p className="font-semibold">{`Result`}</p>
             </div>
           </CardHeader>
           <Divider />
           <p></p>
           {isNodeExpanded ? (
             <CardBody>
-              <div className="h-[900px] w-[900px] text-semibold mb-3">
-                <iframe
-                  className="overflow-auto rounded-md"
-                  src={data.file}
-                  width="100%"
-                  height="100%"
+              <div className="max-h-[900px] max-w-[900px] min-w-96 text-semibold mb-3">
+                {/* Textarea content here */}
+                <Textarea
+                  ref={textareaRef}
+                  isReadOnly
+                  variant="bordered"
+                  label="Content"
+                  labelPlacement="outside"
+                  defaultValue={data.value}
+                  className="w-full h-full overflow-y-auto text-black custom-scrollbar"
+                  onMouseDown={preventDrag} // Prevent dragging on mousedown
+                  onWheel={preventDrag} // Prevent zooming on scroll
                 />
               </div>
               <Divider />
               <CardFooter className="flex flex-row justify-between">
-                <div></div>
+                <div>
+                  <Button
+                    size="sm"
+                    className="text-md bg-[#6366F1] text-white focus:outline-none w-[60px] h-[28px]"
+                    onPress={handleCopyClick}
+                  >
+                    Copy
+                  </Button>
+                </div>
                 <Tooltip
                   placement="right"
                   color="foreground"
@@ -151,11 +169,11 @@ function FileNode({ id, data }) {
               </Tooltip>
             </CardFooter>
           )}
-          <Handle type="source" position={Position.Right} />
+          <Handle type="target" position={Position.Left} />
         </Card>
-      </Tooltip>
-    </Badge>
+      </Badge>
+    </>
   );
 }
 
-export default FileNode;
+export default OutputNode;

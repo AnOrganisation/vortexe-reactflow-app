@@ -1,7 +1,13 @@
 import React from "react";
 import { Button } from "@nextui-org/react";
 
-const Workflow = ({ workflowName, actionList, commands, workflowID }) => {
+const Workflow = ({
+  workflowName,
+  actionList,
+  commands,
+  workflowID,
+  activeFileContent,
+}) => {
   const handlePress = () => {
     console.log(`Executing workflow: ${workflowName} with id: ${workflowID}`);
     actionList.forEach((action) => {
@@ -12,6 +18,7 @@ const Workflow = ({ workflowName, actionList, commands, workflowID }) => {
       );
     });
   };
+
   return (
     <Button
       onPress={handlePress}

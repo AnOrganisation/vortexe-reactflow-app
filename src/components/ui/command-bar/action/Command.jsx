@@ -12,6 +12,13 @@ const Command = ({
   onNodesDelete,
   commandID,
   activeFileContent,
+  activeNodeID,
+  fileNodes,
+  setFileNodes,
+  setFileEdges,
+  setAlert,
+  setAlertMessage,
+  setAlertType,
 }) => {
   const runCommand = async () => {
     try {
@@ -21,12 +28,14 @@ const Command = ({
         prompt: prompt,
       });
       console.log("Success:", response.data);
+      return response.data;
     } catch (error) {
       console.error(error);
+      return;
     }
   };
 
-  const handlePress = () => {
+  const handlePress = async () => {
     if (isActivatedFromCustomWorkflowModal) {
       console.log(
         `Adding command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
@@ -69,10 +78,42 @@ const Command = ({
         setEdges((eds) => [...eds, newEdge]);
       }
     } else {
-      console.log(
-        `Executing command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
-      );
-      runCommand();
+      /**
+       * *Creation of the output node to display the result of the command when triggered*
+       */
+
+      //find the node that the command was ran on by id
+      const triggerNode = fileNodes.find((node) => node.id === activeNodeID);
+
+      if (triggerNode && triggerNode.type === "FileNode") {
+        console.log(
+          `Executing command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
+        );
+        const result = await runCommand();
+        const newOutputNode = {
+          id: uuidv4(),
+          type: "OutputNode",
+          data: {
+            value: result.summary,
+            label: commandName,
+          },
+          position: {
+            x: triggerNode.position.x + 100,
+            y: triggerNode.position.y,
+          },
+        };
+        const newFileEdge = {
+          id: `${triggerNode.id}-${newOutputNode.id}`,
+          source: triggerNode.id,
+          target: newOutputNode.id,
+        };
+        setFileNodes((nds) => [...nds, newOutputNode]);
+        setFileEdges((eds) => [...eds, newFileEdge]);
+      } else {
+        setAlertMessage("Command can only be executed on a File");
+        setAlertType("danger");
+        setAlert(true);
+      }
     }
   };
   return (

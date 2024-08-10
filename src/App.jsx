@@ -17,11 +17,13 @@ import NumberInput from "./NumberInput.jsx";
 import ColorPreview from "./ColorPreview.jsx";
 import ActionNode from "./components/nodes/ActionNode.jsx";
 import FileNode from "./components/nodes/FileNode.jsx";
+import OutputNode from "./components/nodes/OutputNode.jsx";
 
 import Navbar from "./components/ui/nav/Navbar.jsx";
 import CommandBar from "./components/ui/command-bar/CommandBar.jsx";
 import ChatBubble from "./components/ui/ChatBubble.jsx";
 import Logo from "./assets/VortexeLogo.png";
+import Alert from "./components/Alert.jsx";
 
 import "./style.css";
 
@@ -30,6 +32,7 @@ const nodeTypes = {
   ColorPreview,
   ActionNode,
   FileNode,
+  OutputNode,
 };
 
 const initialNodes = (onNodeClick, activeNodeID) => {
@@ -110,7 +113,14 @@ const App = () => {
   const [activeFileContent, setActiveFileContent] = useState(undefined);
 
   //State to track the clicked node
-  // const [activeNodeID, setActiveNodeID] = useState(undefined);
+  const [activeNodeID, setActiveNodeID] = useState(undefined);
+
+  // State to track the alert
+  const [alert, setAlert] = useState(false);
+  // State to track alert message
+  const [alertMessage, setAlertMessage] = useState("");
+  // State to track alert type
+  const [alertType, setAlertType] = useState("");
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -138,7 +148,10 @@ const App = () => {
         },
       }))
     );
-    setActiveFileContent(node.data.content);
+    if (node.type === "FileNode") {
+      setActiveFileContent(node.data.content);
+    }
+    setActiveNodeID(node.id);
   };
 
   const onUpload = async (formData) => {
@@ -184,15 +197,38 @@ const App = () => {
     }
   };
 
+  const onAlertClose = () => {
+    //remove the alert when closed
+    setAlert(false);
+  };
+
+  const defaultEdgeOptions = { animated: true };
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <div className="relative flex flex-row items-center justify-center w-full">
         <Navbar onUpload={onUpload} />
       </div>
-      <CommandBar activeFileContent={activeFileContent} />
+      <CommandBar
+        activeFileContent={activeFileContent}
+        activeNodeID={activeNodeID}
+        fileNodes={nodes}
+        setFileNodes={setNodes}
+        setFileEdges={setEdges}
+        setAlert={setAlert}
+        setAlertMessage={setAlertMessage}
+        setAlertType={setAlertType}
+      />
       <div className="absolute left-0 z-20 mt-5 ml-4">
         <Image src={Logo} alt="Vortexe Logo" className="w-10 h-10"></Image>
       </div>
+      {alert && (
+        <Alert
+          message={alertMessage}
+          type={alertType}
+          onAlertClose={onAlertClose}
+        ></Alert>
+      )}
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
@@ -202,6 +238,9 @@ const App = () => {
         onConnect={onConnect}
         onKeyDown={handleKeyDown}
         onNodeClick={onNodeClick}
+        nodesDraggable={true}
+        panOnScroll={false}
+        defaultEdgeOptions={defaultEdgeOptions}
         fitView
       >
         <Background variant="dots" />
