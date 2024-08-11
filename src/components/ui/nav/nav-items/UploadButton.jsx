@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Button } from "@nextui-org/react";
 
 const UploadButton = ({ onUpload }) => {
@@ -6,12 +6,15 @@ const UploadButton = ({ onUpload }) => {
 
   const handleFileChange = (event) => {
     let selectedFile = event.target.files[0];
+    const fileUrl = URL.createObjectURL(selectedFile);
 
     const formData = new FormData();
     formData.append("user_id", "default_user");
     formData.append("file", selectedFile);
     formData.append("workflow_id", "wrk1");
-    onUpload(formData);
+
+    // Pass both fileUrl and formData to the parent component
+    onUpload(fileUrl, formData);
   };
 
   return (

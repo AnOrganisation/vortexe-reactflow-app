@@ -154,7 +154,7 @@ const App = () => {
     setActiveNodeID(node.id);
   };
 
-  const onUpload = async (formData) => {
+  const onUpload = async (fileUrl, formData) => {
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/upload",
@@ -168,7 +168,7 @@ const App = () => {
       console.log("Success:");
 
       // Generate PDF from the raw content
-      const pdfUrl = await generatePDF(response.data.content);
+      const pdfUrl = fileUrl;
 
       // Find the last node of the same type
       const lastNode = nodes
