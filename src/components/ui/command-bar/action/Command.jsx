@@ -85,7 +85,11 @@ const Command = ({
       //find the node that the command was ran on by id
       const triggerNode = fileNodes.find((node) => node.id === activeNodeID);
 
-      if (triggerNode && triggerNode.type === "FileNode") {
+      if (!(triggerNode && triggerNode.type === "FileNode")) {
+        setAlertMessage("Command can only be executed on a File");
+        setAlertType("danger");
+        setAlert(true);
+      } else {
         console.log(
           `Executing command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
         );
@@ -109,10 +113,6 @@ const Command = ({
         };
         setFileNodes((nds) => [...nds, newOutputNode]);
         setFileEdges((eds) => [...eds, newFileEdge]);
-      } else {
-        setAlertMessage("Command can only be executed on a File");
-        setAlertType("danger");
-        setAlert(true);
       }
     }
   };

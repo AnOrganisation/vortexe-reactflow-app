@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@nextui-org/react";
+import { v4 as uuidv4 } from "uuid";
+import OutputNode from "../../../nodes/OutputNode";
 import axios from "axios";
 
 const Workflow = ({
@@ -16,9 +18,6 @@ const Workflow = ({
   setAlertMessage,
   setAlertType,
 }) => {
-  const [prompts, setPrompts] = useState([]);
-  const [isRunning, setIsRunning] = useState(false); // Track if workflow should run
-
   const getPrompts = () => {
     const newPrompts = [];
     actionList.forEach((action) => {
@@ -28,7 +27,7 @@ const Workflow = ({
         }
       });
     });
-    setPrompts(newPrompts);
+    return newPrompts; // Return the prompts array directly
   };
 
   const runWorkflow = async (prompts) => {
@@ -51,19 +50,20 @@ const Workflow = ({
       return content; // Final content after all prompts are processed
     } catch (error) {
       console.error("Error:", error);
-      return;
+      return null;
     }
   };
 
-  useEffect(() => {
-    if (isRunning) {
-      runWorkflow(prompts).then(() => {
-        setIsRunning(false);
-      });
+  const handlePress = async () => {
+    // Find the node that the command was ran on by id
+    const triggerNode = fileNodes.find((node) => node.id === activeNodeID);
+    if (!(triggerNode && triggerNode.type === "FileNode")) {
+      setAlertMessage("Workflow can only be executed on a File");
+      setAlertType("danger");
+      setAlert(true);
+      return;
     }
-  }, [prompts, isRunning]);
 
-  const handlePress = () => {
     console.log(`Executing workflow: ${workflowName} with id: ${workflowID}`);
     actionList.forEach((action) => {
       console.log(` with action: ${action}`);
@@ -73,8 +73,36 @@ const Workflow = ({
       );
     });
 
-    getPrompts(); // Get prompts for each command in the workflow
-    setIsRunning(true); // Trigger the workflow to run
+    const prompts = getPrompts(); // Get prompts for each command in the workflow
+
+    const result = await runWorkflow(prompts); // Run the workflow with the correct prompts and get the final result
+
+    console.log("Workflow Result in handlePress:", result);
+    /**
+     * *Creation of the output node to display the result of the workflow when triggered*
+     */
+
+    if (triggerNode && triggerNode.type === "FileNode") {
+      const newOutputNode = {
+        id: uuidv4(),
+        type: "OutputNode",
+        data: {
+          value: result,
+          label: workflowName,
+        },
+        position: {
+          x: triggerNode.position.x + 100,
+          y: triggerNode.position.y,
+        },
+      };
+      const newFileEdge = {
+        id: `${triggerNode.id}-${newOutputNode.id}`,
+        source: triggerNode.id,
+        target: newOutputNode.id,
+      };
+      setFileNodes((nds) => [...nds, newOutputNode]);
+      setFileEdges((eds) => [...eds, newFileEdge]);
+    }
   };
 
   return (
