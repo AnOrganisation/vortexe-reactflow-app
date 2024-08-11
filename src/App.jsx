@@ -26,6 +26,7 @@ import Logo from "./assets/VortexeLogo.png";
 import Alert from "./components/Alert.jsx";
 
 import "./style.css";
+import WorkflowEdge from "./components/edges/WorkflowEdge.jsx";
 
 const nodeTypes = {
   NumberInput,
@@ -231,6 +232,7 @@ const App = () => {
       )}
       <ReactFlow
         nodeTypes={nodeTypes}
+        edgeTypes={{ custom: WorkflowEdge }}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}

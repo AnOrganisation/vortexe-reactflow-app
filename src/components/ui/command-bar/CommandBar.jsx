@@ -44,7 +44,7 @@ const CommandBar = ({
   ]);
 
   const initialWorkflows = new Map([
-    ["Workflow 1", ["Task 1", "Task 2"]],
+    ["Workflow 1", ["Simplify", "Summarize"]],
     ["Workflow 2", ["Task 1", "Task 2"]],
     ["Workflow 3", ["Task 1", "Task 2"]],
     ["Workflow 4", ["Task 1", "Task 2"]],

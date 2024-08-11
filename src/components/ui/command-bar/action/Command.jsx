@@ -100,6 +100,7 @@ const Command = ({
           data: {
             value: result.summary,
             label: commandName,
+            source: "command",
           },
           position: {
             x: triggerNode.position.x + 100,

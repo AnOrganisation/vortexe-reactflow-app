@@ -1,7 +1,7 @@
+// Workflow.jsx
 import React, { useState } from "react";
 import { Button } from "@nextui-org/react";
 import { v4 as uuidv4 } from "uuid";
-import OutputNode from "../../../nodes/OutputNode";
 import axios from "axios";
 
 const Workflow = ({
@@ -89,17 +89,23 @@ const Workflow = ({
         data: {
           value: result,
           label: workflowName,
+          source: "workflow",
         },
         position: {
           x: triggerNode.position.x + 100,
           y: triggerNode.position.y,
         },
       };
+
       const newFileEdge = {
         id: `${triggerNode.id}-${newOutputNode.id}`,
         source: triggerNode.id,
         target: newOutputNode.id,
+        type: "custom", // Use the CustomEdge
+        data: { label: `${workflowName}`, commands: actionList }, // Pass the label text
+        style: { stroke: "#6366F1" },
       };
+
       setFileNodes((nds) => [...nds, newOutputNode]);
       setFileEdges((eds) => [...eds, newFileEdge]);
     }
