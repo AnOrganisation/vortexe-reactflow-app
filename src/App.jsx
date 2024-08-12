@@ -242,6 +242,7 @@ const App = () => {
         onNodeClick={onNodeClick}
         nodesDraggable={true}
         panOnScroll={false}
+        snapToGrid={true}
         defaultEdgeOptions={defaultEdgeOptions}
         fitView
       >

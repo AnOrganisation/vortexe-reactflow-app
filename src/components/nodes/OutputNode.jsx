@@ -58,7 +58,7 @@ function OutputNode({ id, data }) {
         color={data.source === "workflow" ? "secondary" : "primary"}
       >
         <Card
-          className={`max-w-[1000px] max-h-[1000px] min-w-[224px] min-h-16 bg-slate-300 bg-opacity-70 ${
+          className={`max-w-[1000px] max-h-[1000px] min-w-[224px] min-h-16 bg-slate-300 bg-opacity-100 ${
             data.isNodeActive
               ? "border-3 border-blue-500 border-opacity-100"
               : ""

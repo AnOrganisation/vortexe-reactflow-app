@@ -12,10 +12,14 @@ import {
 import { Handle, Position } from "@xyflow/react";
 import { useState } from "react";
 import PDFIcon from "../../assets/pdf.png";
-import PDF from "../../assets/SOLICITATION_RFB-IS-24201409.pdf";
+import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
+import PDF from "../../assets/SSSExemption.pdf";
 
 function FileNode({ id, data }) {
   const [isNodeExpanded, setIsNodeExpanded] = useState(false);
+
+  const docs = [{ uri: PDF }];
+
   const handleExpandClick = () => {
     setIsNodeExpanded(!isNodeExpanded);
     setShowTooltip(!showTooltip);
@@ -43,7 +47,7 @@ function FileNode({ id, data }) {
         }
       >
         <Card
-          className={`max-w-[1000px] max-h-[1000px] bg-slate-300 bg-opacity-70 ${
+          className={`max-w-[1000px] max-h-[1000px] bg-slate-300 bg-opacity-100 ${
             data.isNodeActive
               ? "border-2 border-blue-500 border-opacity-100"
               : ""
