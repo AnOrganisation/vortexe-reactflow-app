@@ -74,3 +74,15 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #4c51bf; /* Darker shade on hover */
 }
+
+.gradient-divider {
+  height: 2px; /* Thickness of the line */
+  background: linear-gradient(to right, transparent, #6366f1, transparent);
+  border: none;
+  margin: 20px 0; /* Adjust the margin as needed */
+}
+
+.profile-menu {
+  font-size: 16px;
+  line-height: 10px;
+}

@@ -27,6 +27,7 @@ import Alert from "./components/Alert.jsx";
 
 import "./style.css";
 import WorkflowEdge from "./components/edges/WorkflowEdge.jsx";
+import { Route, Routes } from "react-router-dom";
 
 const nodeTypes = {
   NumberInput,
@@ -205,7 +206,7 @@ const App = () => {
 
   const defaultEdgeOptions = { animated: true };
 
-  return (
+  const appContent = (
     <div style={{ width: "100vw", height: "100vh" }}>
       <div className="relative flex flex-row items-center justify-center w-full">
         <Navbar onUpload={onUpload} />
@@ -250,6 +251,11 @@ const App = () => {
         <MiniMap nodeColor={nodeColor} nodeStrokeWidth={3} zoomable pannable />
       </ReactFlow>
     </div>
+  );
+  return (
+    <Routes>
+      <Route path="/" element={appContent} />
+    </Routes>
   );
 };
 
