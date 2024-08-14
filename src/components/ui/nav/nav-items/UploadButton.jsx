@@ -5,16 +5,18 @@ const UploadButton = ({ onUpload }) => {
   const inputRef = useRef(null);
 
   const handleFileChange = (event) => {
-    let selectedFile = event.target.files[0];
-    const fileUrl = URL.createObjectURL(selectedFile);
+    if (event) {
+      let selectedFile = event.target.files[0];
+      const fileUrl = URL.createObjectURL(selectedFile);
 
-    const formData = new FormData();
-    formData.append("user_id", "default_user");
-    formData.append("file", selectedFile);
-    formData.append("workflow_id", "wrk1");
+      const formData = new FormData();
+      formData.append("user_id", "default_user");
+      formData.append("file", selectedFile);
+      formData.append("workflow_id", "wrk1");
 
-    // Pass both fileUrl and formData to the parent component
-    onUpload(fileUrl, formData);
+      // Pass both fileUrl and formData to the parent component
+      onUpload(fileUrl, formData);
+    }
   };
 
   return (

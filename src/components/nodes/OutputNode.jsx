@@ -16,7 +16,7 @@ import { useState, useRef } from "react";
 import "../../style.css";
 
 function OutputNode({ id, data }) {
-  const [isNodeExpanded, setIsNodeExpanded] = useState(false);
+  const [isNodeExpanded, setIsNodeExpanded] = useState(true);
   const textareaRef = useRef(null);
   const [showAlert, setShowAlert] = useState(false); // State to show/hide alert
 

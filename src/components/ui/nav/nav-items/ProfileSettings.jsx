@@ -22,7 +22,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 const ProfileSettings = () => {
   const { logout } = useAuth0();
   const { user, isAuthenticated, isLoading } = useAuth0();
-  console.log(isAuthenticated);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isProfileActive, setIsProfileActive] = useState(true);
