@@ -103,7 +103,7 @@ const Workflow = ({
         target: newOutputNode.id,
         type: "custom", // Use the CustomEdge
         data: { label: `${workflowName}`, commands: actionList }, // Pass the label text
-        style: { stroke: "#6366F1" },
+        style: { stroke: "#7828c8" },
       };
 
       setFileNodes((nds) => [...nds, newOutputNode]);

@@ -212,7 +212,7 @@ const App = () => {
     setAlert(false);
   };
 
-  const defaultEdgeOptions = { animated: true };
+  const defaultEdgeOptions = { animated: true, style: { stroke: "#006fee" } };
 
   const appContent = (
     <div style={{ width: "100vw", height: "100vh" }}>
