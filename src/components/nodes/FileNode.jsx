@@ -49,7 +49,7 @@ function FileNode({ id, data }) {
         <Card
           className={`max-w-[1000px] max-h-[1000px] bg-slate-300 bg-opacity-100 ${
             data.isNodeActive
-              ? "border-2 border-blue-500 border-opacity-100"
+              ? "border-3 border-blue-500 border-opacity-100"
               : ""
           }`}
         >

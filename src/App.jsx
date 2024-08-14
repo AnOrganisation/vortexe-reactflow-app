@@ -142,19 +142,26 @@ const App = () => {
   );
 
   const onNodeClick = (event, node) => {
+    // Determine if the node will be active after this click
+    const isActiveAfterClick = !node.data.isNodeActive;
+
     setNodes((nds) =>
       nds.map((n) => ({
         ...n,
         data: {
           ...n.data,
-          isNodeActive: n.id === node.id,
+          isNodeActive: n.id === node.id ? isActiveAfterClick : false,
         },
       }))
     );
+
+    // Set the active content only if the node becomes active after the click
     if (node.type === "FileNode") {
-      setActiveFileContent(node.data.content);
+      setActiveFileContent(isActiveAfterClick ? node.data.content : null);
     }
-    setActiveNodeID(node.id);
+
+    // Set the activeNodeID based on the new active state
+    setActiveNodeID(isActiveAfterClick ? node.id : null);
   };
 
   const onUpload = async (fileUrl, formData) => {

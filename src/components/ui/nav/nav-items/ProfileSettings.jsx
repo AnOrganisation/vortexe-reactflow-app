@@ -65,7 +65,7 @@ const ProfileSettings = () => {
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                class="size-6"
+                className="w-6 h-6"
               >
                 <path
                   strokeLinecap="round"
@@ -86,7 +86,7 @@ const ProfileSettings = () => {
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                class="size-6"
+                className="w-6 h-6"
               >
                 <path
                   strokeLinecap="round"
@@ -120,7 +120,7 @@ const ProfileSettings = () => {
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                class="size-6"
+                className="w-6 h-6"
               >
                 <path
                   strokeLinecap="round"
