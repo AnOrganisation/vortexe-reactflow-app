@@ -17,7 +17,13 @@ import {
 } from "@nextui-org/react";
 import React, { useState } from "react";
 import "../../../../style.css";
+import { useAuth0 } from "@auth0/auth0-react";
+
 const ProfileSettings = () => {
+  const { logout } = useAuth0();
+  const { user, isAuthenticated, isLoading } = useAuth0();
+  console.log(isAuthenticated);
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isProfileActive, setIsProfileActive] = useState(true);
   const [isSubscriptionsActive, setIsSubscriptionsActive] = useState(false);
@@ -42,7 +48,11 @@ const ProfileSettings = () => {
             className="w-[29px] h-[29px] focus:outline-none bg-transparent rounded-full border-0"
           >
             <Image
-              src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+              src={
+                isAuthenticated
+                  ? user.picture
+                  : "https://i.pravatar.cc/150?u=a04258a2462d826712d"
+              }
               className="w-[29px] h-[29px] border-2 rounded-full border-white"
             />
           </Button>
@@ -94,7 +104,16 @@ const ProfileSettings = () => {
               <p className="ml-3 profile-menu">Settings</p>
             </div>
           </DropdownItem>
-          <DropdownItem key="delete" className="text-danger" color="danger">
+          <DropdownItem
+            onClick={() =>
+              logout({
+                logoutParams: { returnTo: "http://localhost:5173/" },
+              })
+            }
+            key="delete"
+            className="text-danger"
+            color="danger"
+          >
             <div className="flex flex-row items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +182,11 @@ const ProfileSettings = () => {
                     >
                       <Avatar
                         isBordered
-                        src="https://i.pravatar.cc/150?u=a04258114e29026708c"
+                        src={
+                          isAuthenticated
+                            ? user.picture
+                            : "https://i.pravatar.cc/150?u=a04258114e29026708c"
+                        }
                         className="w-20 h-20 ml-52 text-large"
                       />
                     </Badge>
