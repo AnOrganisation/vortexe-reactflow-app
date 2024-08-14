@@ -7,10 +7,10 @@ const WorkflowOutputLabel = ({ label, commands }) => (
     title={label}
     className="bg-[#6366F1] rounded-md shadow-lg"
     titleClass="text-white font-bold"
-    contentClass="bg-gray-50 text-gray-700"
+    contentClass="bg-[#6366F1] text-gray-700"
   >
     <div>
-      <ul className="flex flex-col items-center justify-center list-disc list-inside">
+      <ul className="flex flex-col items-center justify-center list-none">
         {commands.map((command, index) => (
           <React.Fragment key={index}>
             <li className="text-white ">{command}</li>
