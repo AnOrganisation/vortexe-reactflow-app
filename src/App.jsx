@@ -28,6 +28,7 @@ import Alert from "./components/Alert.jsx";
 import "./style.css";
 import WorkflowEdge from "./components/edges/WorkflowEdge.jsx";
 import { Route, Routes } from "react-router-dom";
+import Home from "./Home.jsx";
 
 const nodeTypes = {
   NumberInput,
@@ -254,7 +255,8 @@ const App = () => {
   );
   return (
     <Routes>
-      <Route path="/" element={appContent} />
+      <Route path="/" element={<Home />} />
+      <Route path="/app" element={appContent} />
     </Routes>
   );
 };
