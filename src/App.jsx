@@ -167,7 +167,7 @@ const App = () => {
   const onUpload = async (fileUrl, formData) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/upload",
+        "http://20.64.147.215:8000/upload",
         formData,
         {
           headers: {
