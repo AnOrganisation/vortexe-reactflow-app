@@ -262,8 +262,8 @@ const App = () => {
   );
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/app" element={appContent} />
+      {/* <Route path="/" element={<Home />} /> */}
+      <Route path="/" element={appContent} />
     </Routes>
   );
 };
