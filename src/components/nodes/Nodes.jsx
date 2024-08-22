@@ -10,7 +10,7 @@ export default [
   {
     id: "2",
     // you can also pass a React component as a label
-    data: { label: <div>Simplify</div> },
+    data: { label: "Simplify" },
     position: { x: 100, y: 125 },
     style: { backgroundColor: "#ff0072", color: "white" },
   },

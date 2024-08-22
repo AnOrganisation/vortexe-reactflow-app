@@ -9,7 +9,7 @@ function ColorPreview() {
   /**
    *start by determining all connections for each handle with the useHandleConnections hook
    *and then fetching the data for the first connected node with updateNodeData
-   **useHandleConnections: returns an array of connections on a specific handle or handle type, each with a source and target node id
+   **useHandleConnections: returns an array of connections on a specific handle or handle type, each with a source node id
    **useNodesData: returns the data object for a specific node id, if it exists in the nodes
    */
   const redConnections = useHandleConnections({

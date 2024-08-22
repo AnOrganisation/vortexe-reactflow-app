@@ -16,5 +16,20 @@ export default {
     },
   },
   darkMode: "class",
-  plugins: [nextui(), require("tailwind-scrollbar")],
+  plugins: [
+    nextui({
+      layout: {
+        borderWidth: {
+          small: "1px", // border-small
+          medium: "2px", // border-medium
+          large: "3px", // border-large
+        },
+      },
+      themes: {
+        light: {},
+        dark: {},
+      },
+    }),
+    require("tailwind-scrollbar"),
+  ],
 };
