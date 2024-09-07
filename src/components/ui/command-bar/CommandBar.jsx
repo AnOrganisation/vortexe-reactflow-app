@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Command from "./action/Command";
 import Workflow from "./workflow/Workflow";
 import { Button } from "@nextui-org/react";
 import CustomWorkflowBtn from "./workflow/CustomWorkflowBtn";
 import CustomActionBtn from "./action/CustomActionBtn";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
 /**
  * CommandBar component renders a UI element that allows users to interact with a list of commands.
@@ -74,6 +75,29 @@ const CommandBar = ({
 
   // State to track the custom workflows
   const [customWorkflows, setCustomWorkflows] = useState(new Map());
+
+  const fetchBasicActions = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        "http://127.0.0.1:8003/v1/get_basic_actions",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Basic actions fetched successfully: ", response.data);
+    } catch (error) {
+      console.error("Basic actions fetch failed:", error);
+    }
+  }, []);
+
+  /**
+   * Fetch basic actions from the backend when the component mounts.
+   */
+  useEffect(() => {
+    fetchBasicActions();
+  }, []);
 
   useEffect(() => {
     if (customActions.size !== 0) {
