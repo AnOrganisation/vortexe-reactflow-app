@@ -98,24 +98,6 @@ const CommandBar = ({
     }
   }, []);
 
-  useEffect(() => {
-    const fetchAndSetBasicActions = async () => {
-      const basicActions = await fetchBasicActions();
-      if (basicActions) {
-        setCommands((prevCommands) => {
-          const newCommands = new Map(prevCommands);
-          basicActions.forEach((action) => {
-            newCommands.set(action.action_id, action.action_name);
-          });
-          return newCommands;
-        });
-      }
-    };
-
-    fetchAndSetBasicActions();
-  }, [fetchBasicActions]);
-  //************************************************************************** */
-
   /**
    * Helper function to introduce a delay (sleep)
    */
@@ -134,7 +116,7 @@ const CommandBar = ({
           },
         }
       );
-      console.log("Custom actions fetched successfully: ", response.data);
+      // console.log("Custom actions fetched successfully: ", response.data);
       return response.data;
     } catch (error) {
       console.error("Custom actions fetch failed:", error);
@@ -143,32 +125,70 @@ const CommandBar = ({
   }, [userID]);
   //************************************************************************** */
 
+  const fetchAndSetActions = async () => {
+    try {
+      const [basicActions, customActions] = await Promise.all([
+        fetchBasicActions(),
+        getCustomActions(),
+      ]);
+
+      if (basicActions) {
+        setCommands((prevCommands) => {
+          const newCommands = new Map(prevCommands);
+          basicActions.forEach((action) => {
+            newCommands.set(action.action_id, action.action_name);
+          });
+          return newCommands;
+        });
+      }
+
+      if (customActions && customActions.length > 0) {
+        console.log("Custom actions retrieved: ", customActions);
+        setCommands((prevCommands) => {
+          const newCommands = new Map(prevCommands);
+          customActions.forEach((action) => {
+            newCommands.set(action.action_id, action.action_name);
+          });
+          return newCommands;
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch actions:", error);
+    }
+  };
+
   /**
    * * Save custom actions to the backend when the custom action component unmounts.
    *  Updates the commands state with the saved custom actions.
    */
-  const saveCustomActions = useCallback(async (customAction) => {
-    if (customAction) {
-      try {
-        const response = await axios.post(
-          `http://127.0.0.1:8003/v1/action/save/${userID}`,
-          customAction,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log("Custom action saved successfully: ", response.data);
-      } catch (error) {
-        console.error("Custom actions save failed:", error);
+  const saveCustomActions = useCallback(
+    async (customAction) => {
+      if (customAction) {
+        try {
+          const response = await axios.post(
+            `http://127.0.0.1:8003/v1/action/save/${userID}`,
+            customAction,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log("Custom action saved successfully: ", response.data);
+        } catch (error) {
+          console.error("Custom actions save failed:", error);
+        }
+        fetchAndSetActions();
       }
-      let actions;
-      do {
-        actions = await getCustomActions();
-      } while (actions.length === 0);
-    }
-  }, []);
+    },
+    [getCustomActions, userID]
+  );
+  //************************************************************************** */
+
+  useEffect(() => {
+    fetchAndSetActions();
+  }, [fetchBasicActions, getCustomActions, userID]);
+
   //************************************************************************** */
 
   useEffect(() => {

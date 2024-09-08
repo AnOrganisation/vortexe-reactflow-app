@@ -93,7 +93,7 @@ const CustomActionBtn = ({ userID, onSave }) => {
         </div>
       </Button>
       <Modal
-        size="xs"
+        size="5xl"
         backdrop="blur"
         isOpen={isOpen}
         onClose={onClose}
@@ -102,37 +102,66 @@ const CustomActionBtn = ({ userID, onSave }) => {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 mt-5">
+              <ModalHeader className="flex flex-col items-center justify-around gap-1 mt-5">
+                <span className="mb-1">
+                  Custom Action
+                  <span className="text-red-500 ">*</span>
+                </span>
                 <Textarea
                   isRequired
                   isInvalid={customActionNameInvalid}
                   maxRows={1}
                   variant="bordered"
                   radius="sm"
-                  label={
-                    <span style={{ color: "white" }}>Custom Action Name</span>
-                  }
                   labelPlacement="outside"
                   placeholder="Enter your custom action name here..."
                   value={customActionName}
                   onChange={handleCustomActionNameChange}
                   errorMessage="Custom action name should not be empty."
-                  className="max-w-[250px]"
+                  className="max-w-[250px] mb-2"
                 />
               </ModalHeader>
-              <ModalBody>
+              <ModalBody className="flex flex-col items-center justify-around gap-1 mt-5">
+                <span className="mb-1">
+                  Write command here. Please be as descriptive as possible.
+                  <span className="text-red-500 ">*</span>
+                </span>
                 <Textarea
                   isRequired
                   isInvalid={promptInvalid}
                   variant="bordered"
-                  label={<span style={{ color: "white" }}>Prompt</span>}
                   labelPlacement="outside"
-                  placeholder="Write your prompt here..."
+                  placeholder="For example: Create a custom email for the client described with the information given. Create this email in a professional manner, with clarity and no more than 30 sentences long"
                   value={promptValue}
                   onChange={handlePromptValueChange}
                   errorMessage="The description should be at least 5 characters long."
-                  className="max-w-[250px]"
+                  className="max-w-full"
                 />
+                <span className="mb-2 font-semibold">
+                  Optional: To further enhance the outcome of your responses*
+                </span>
+                <div className="flex flex-row justify-between w-full">
+                  <div className="w-[400px]">
+                    <span>
+                      Please upload any examples of the{" "}
+                      <span className="text-[#6366F1]">structure</span> you
+                      expect.
+                    </span>
+                    <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2">
+                      yo
+                    </div>
+                  </div>
+                  <div className="w-[400px]">
+                    <span>
+                      Please upload any examples of the{" "}
+                      <span className="text-[#6366F1]">content</span> you
+                      expect.
+                    </span>
+                    <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2">
+                      yo
+                    </div>
+                  </div>
+                </div>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
