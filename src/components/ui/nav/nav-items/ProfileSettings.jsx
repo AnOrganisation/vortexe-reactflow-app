@@ -20,7 +20,7 @@ import "../../../../style.css";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const ProfileSettings = () => {
+const ProfileSettings = ({ setUserID }) => {
   const { logout } = useAuth0();
   const { user, isAuthenticated, isLoading } = useAuth0();
 
@@ -47,6 +47,7 @@ const ProfileSettings = () => {
     // Define an async function inside the useEffect
     const registerUser = async () => {
       if (isAuthenticated) {
+        setUserID(user.sub.slice(user.sub.indexOf("|") + 1));
         const user_data = {
           user_id: user.sub.slice(user.sub.indexOf("|") + 1),
           first_name: user.given_name,

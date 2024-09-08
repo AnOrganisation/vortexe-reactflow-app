@@ -22,27 +22,28 @@ const CommandBar = ({
   setAlert,
   setAlertMessage,
   setAlertType,
+  userID,
 }) => {
-  const initialCommands = new Map([
-    ["Simplify", "Simplify the text"],
-    ["Summarize", "Summarize the content"],
-    ["Email", "Compose an email"],
-    ["Transcribe", "Transcribe the audio"],
-    ["Video", "Process the video"],
-    ["Analyze", "Analyze the data"],
-    ["Textify", "Convert to text"],
-    ["Itinerary", "Create an itinerary"],
-    ["Analytics", "Generate analytics"],
-    ["Customer Exp", "Improve customer experience"],
-    ["Vocalize", "Convert text to speech"],
-    ["FAQ", "Generate FAQs"],
-    ["Inspiration", "Provide inspiration"],
-    ["Grammar", "Check grammar"],
-    ["Randomize", "Randomize the order"],
-    ["Translate", "Translate the text"],
-    ["Fix Format", "Fix the format"],
-    ["Add Refs", "Add references"],
-  ]);
+  // const initialCommands = new Map([
+  //   ["Simplify", "Simplify the text"],
+  //   ["Summarize", "Summarize the content"],
+  //   ["Email", "Compose an email"],
+  //   ["Transcribe", "Transcribe the audio"],
+  //   ["Video", "Process the video"],
+  //   ["Analyze", "Analyze the data"],
+  //   ["Textify", "Convert to text"],
+  //   ["Itinerary", "Create an itinerary"],
+  //   ["Analytics", "Generate analytics"],
+  //   ["Customer Exp", "Improve customer experience"],
+  //   ["Vocalize", "Convert text to speech"],
+  //   ["FAQ", "Generate FAQs"],
+  //   ["Inspiration", "Provide inspiration"],
+  //   ["Grammar", "Check grammar"],
+  //   ["Randomize", "Randomize the order"],
+  //   ["Translate", "Translate the text"],
+  //   ["Fix Format", "Fix the format"],
+  //   ["Add Refs", "Add references"],
+  // ]);
 
   const initialWorkflows = new Map([
     ["Workflow 1", ["Simplify", "Summarize"]],
@@ -64,7 +65,7 @@ const CommandBar = ({
 
   const [workflows, setWorkflows] = useState(initialWorkflows);
   // State to store the filtered commands
-  const [commands, setCommands] = useState(initialCommands);
+  const [commands, setCommands] = useState(new Map([]));
   // State to track which button is active, default is 'Commands'
   const [activeButton, setActiveButton] = useState("Commands");
   // State to track the search query
@@ -72,9 +73,13 @@ const CommandBar = ({
 
   // State to track the custom actions
   const [customActions, setCustomActions] = useState(new Map());
-
   // State to track the custom workflows
   const [customWorkflows, setCustomWorkflows] = useState(new Map());
+
+  /**
+   ** Fetch basic actions from the backend when the component mounts.
+   *  Updates the commands state with the fetched basic actions.
+   */
 
   const fetchBasicActions = useCallback(async () => {
     try {
@@ -87,17 +92,84 @@ const CommandBar = ({
         }
       );
       console.log("Basic actions fetched successfully: ", response.data);
+      return response.data;
     } catch (error) {
       console.error("Basic actions fetch failed:", error);
     }
   }, []);
 
-  /**
-   * Fetch basic actions from the backend when the component mounts.
-   */
   useEffect(() => {
-    fetchBasicActions();
+    const fetchAndSetBasicActions = async () => {
+      const basicActions = await fetchBasicActions();
+      if (basicActions) {
+        setCommands((prevCommands) => {
+          const newCommands = new Map(prevCommands);
+          basicActions.forEach((action) => {
+            newCommands.set(action.action_id, action.action_name);
+          });
+          return newCommands;
+        });
+      }
+    };
+
+    fetchAndSetBasicActions();
+  }, [fetchBasicActions]);
+  //************************************************************************** */
+
+  /**
+   * Helper function to introduce a delay (sleep)
+   */
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  /**
+   * * Get custom actions from the backend and update the commands state
+   */
+  const getCustomActions = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8003/v1/action/get/${userID}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Custom actions fetched successfully: ", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Custom actions fetch failed:", error);
+      return [];
+    }
+  }, [userID]);
+  //************************************************************************** */
+
+  /**
+   * * Save custom actions to the backend when the custom action component unmounts.
+   *  Updates the commands state with the saved custom actions.
+   */
+  const saveCustomActions = useCallback(async (customAction) => {
+    if (customAction) {
+      try {
+        const response = await axios.post(
+          `http://127.0.0.1:8003/v1/action/save/${userID}`,
+          customAction,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Custom action saved successfully: ", response.data);
+      } catch (error) {
+        console.error("Custom actions save failed:", error);
+      }
+      let actions;
+      do {
+        actions = await getCustomActions();
+      } while (actions.length === 0);
+    }
   }, []);
+  //************************************************************************** */
 
   useEffect(() => {
     if (customActions.size !== 0) {
@@ -123,32 +195,32 @@ const CommandBar = ({
     }
   }, [customWorkflows]);
 
-  useEffect(() => {
-    // Filter commands based on the search query
-    if (searchQuery === "") {
-      if (activeButton === "Commands") {
-        setCommands(new Map([...initialCommands, ...customActions]));
-      } else {
-        setWorkflows(new Map([...initialWorkflows, ...customWorkflows]));
-      }
-    } else {
-      if (activeButton === "Commands") {
-        const filteredCommands = new Map(
-          [...initialCommands, ...customActions].filter(([key, value]) =>
-            key.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        );
-        setCommands(filteredCommands);
-      } else {
-        const filteredWorkflows = new Map(
-          [...initialWorkflows, ...customWorkflows].filter(([key, value]) =>
-            key.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        );
-        setWorkflows(filteredWorkflows);
-      }
-    }
-  }, [searchQuery, activeButton, customActions, customWorkflows]);
+  // useEffect(() => {
+  //   // Filter commands based on the search query
+  //   if (searchQuery === "") {
+  //     if (activeButton === "Commands") {
+  //       setCommands(new Map([...initialCommands, ...customActions]));
+  //     } else {
+  //       setWorkflows(new Map([...initialWorkflows, ...customWorkflows]));
+  //     }
+  //   } else {
+  //     if (activeButton === "Commands") {
+  //       const filteredCommands = new Map(
+  //         [...initialCommands, ...customActions].filter(([key, value]) =>
+  //           key.toLowerCase().includes(searchQuery.toLowerCase())
+  //         )
+  //       );
+  //       setCommands(filteredCommands);
+  //     } else {
+  //       const filteredWorkflows = new Map(
+  //         [...initialWorkflows, ...customWorkflows].filter(([key, value]) =>
+  //           key.toLowerCase().includes(searchQuery.toLowerCase())
+  //         )
+  //       );
+  //       setWorkflows(filteredWorkflows);
+  //     }
+  //   }
+  // }, [searchQuery, activeButton, customActions, customWorkflows]);
 
   /**
    * Handles button clicks to set the active button state.
@@ -190,7 +262,11 @@ const CommandBar = ({
       </div>
       <div className="border border-[#6366F1] rounded-lg w-[90%] mb-5 flex flex-col">
         {activeButton === "Commands" ? (
-          <CustomActionBtn setCustomAction={setCustomActions} />
+          <CustomActionBtn
+            // setCustomAction={setCustomActions}
+            userID={userID}
+            onSave={saveCustomActions}
+          />
         ) : (
           <CustomWorkflowBtn
             setCustomWorkflow={setCustomWorkflows}
@@ -202,7 +278,7 @@ const CommandBar = ({
             ? Array.from(commands).map(([key, value], index) => (
                 <Command
                   key={index}
-                  commandName={key}
+                  commandName={value}
                   prompt={value}
                   commandID={`commandBar-` + uuidv4()}
                   activeFileContent={activeFileContent}

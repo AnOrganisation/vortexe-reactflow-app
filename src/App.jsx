@@ -112,9 +112,11 @@ const App = () => {
     }
   };
 
+  //State to track the userID
+  const [userID, setUserID] = useState(null);
+
   //State for active file content
   const [activeFileContent, setActiveFileContent] = useState(undefined);
-
   //State to track the clicked node
   const [activeNodeID, setActiveNodeID] = useState(undefined);
 
@@ -217,7 +219,7 @@ const App = () => {
   const appContent = (
     <div style={{ width: "100vw", height: "100vh" }}>
       <div className="relative flex flex-row items-center justify-center w-full">
-        <Navbar onUpload={onUpload} />
+        <Navbar onUpload={onUpload} setUserID={setUserID} />
       </div>
       <CommandBar
         activeFileContent={activeFileContent}
@@ -228,6 +230,7 @@ const App = () => {
         setAlert={setAlert}
         setAlertMessage={setAlertMessage}
         setAlertType={setAlertType}
+        userID={userID}
       />
       <div className="absolute left-0 z-20 mt-5 ml-4">
         <Image src={Logo} alt="Vortexe Logo" className="w-10 h-10"></Image>

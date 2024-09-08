@@ -9,8 +9,9 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import React, { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
-const CustomActionBtn = ({ setCustomAction }) => {
+const CustomActionBtn = ({ userID, onSave }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   //State to store the custom action name
@@ -51,12 +52,25 @@ const CustomActionBtn = ({ setCustomAction }) => {
       setCustomActionNameInvalid(true);
       return;
     } else {
+      // Save the custom action prompt to the backend
+      const customAction = {
+        user_id: userID,
+        action_id: userID + uuidv4(),
+        action_name: customActionName,
+        prompt: {
+          instruction: promptValue,
+        },
+        action_type: "custom",
+        description: "this is a custom action",
+      };
+      onSave(customAction);
       // Set the custom action in the parent component's state
-      setCustomAction((prevActions) => {
-        const newActions = new Map(prevActions);
-        newActions.set(customActionName, promptValue);
-        return newActions;
-      });
+      // setCustomAction((prevActions) => {
+      //   const newActions = new Map(prevActions);
+      //   newActions.set(customActionName, promptValue);
+      //   return newActions;
+      // });
+
       // Reset the form and close the modal
       setCustomActionName("");
       setPromptValue("");
