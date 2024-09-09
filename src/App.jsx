@@ -177,7 +177,7 @@ const App = () => {
           },
         }
       );
-      console.log("Success:");
+      console.log("File Upload Success:");
 
       // Generate PDF from the raw content
       const pdfUrl = fileUrl;
@@ -231,7 +231,6 @@ const App = () => {
         setAlertMessage={setAlertMessage}
         setAlertType={setAlertType}
         userID={userID}
-        onUpload={onUpload}
       />
       <div className="absolute left-0 z-20 mt-5 ml-4">
         <Image src={Logo} alt="Vortexe Logo" className="w-10 h-10"></Image>

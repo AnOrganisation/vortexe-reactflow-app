@@ -23,7 +23,6 @@ const CommandBar = ({
   setAlertMessage,
   setAlertType,
   userID,
-  onUpload,
 }) => {
   // const initialCommands = new Map([
   //   ["Simplify", "Simplify the text"],
@@ -282,7 +281,6 @@ const CommandBar = ({
             // setCustomAction={setCustomActions}
             userID={userID}
             onSave={saveCustomActions}
-            onUpload={onUpload}
           />
         ) : (
           <CustomWorkflowBtn

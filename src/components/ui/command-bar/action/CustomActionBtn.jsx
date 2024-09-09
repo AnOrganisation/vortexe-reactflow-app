@@ -14,8 +14,9 @@ import {
 } from "@nextui-org/react";
 import React, { useState, useRef } from "react";
 import { ChevronDownIcon } from "../../nav/nav-items/ChevronDownIcon";
+import axios from "axios";
 
-const CustomActionBtn = ({ userID, onSave, onUpload }) => {
+const CustomActionBtn = ({ userID, onSave }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const inputRef = useRef(null);
 
@@ -120,6 +121,23 @@ const CustomActionBtn = ({ userID, onSave, onUpload }) => {
   const [selectedFormattingOption, setSelectedFormattingOption] = useState(
     new Set(["Formatting"])
   );
+
+  const onUpload = async (fileUrl, formData) => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("File uploaded successfully:", response.data);
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  };
 
   const handleFileChange = (event) => {
     if (event) {
