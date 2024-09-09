@@ -23,6 +23,7 @@ const CommandBar = ({
   setAlertMessage,
   setAlertType,
   userID,
+  onUpload,
 }) => {
   // const initialCommands = new Map([
   //   ["Simplify", "Simplify the text"],
@@ -99,17 +100,12 @@ const CommandBar = ({
   }, []);
 
   /**
-   * Helper function to introduce a delay (sleep)
-   */
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-  /**
    * * Get custom actions from the backend and update the commands state
    */
   const getCustomActions = useCallback(async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8003/v1/action/get/${userID}`,
+        `http://127.0.0.1:8003/v1/action/list?user_id=${userID}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -166,7 +162,7 @@ const CommandBar = ({
       if (customAction) {
         try {
           const response = await axios.post(
-            `http://127.0.0.1:8003/v1/action/save/${userID}`,
+            `http://127.0.0.1:8003/v1/action/save`,
             customAction,
             {
               headers: {
@@ -286,6 +282,7 @@ const CommandBar = ({
             // setCustomAction={setCustomActions}
             userID={userID}
             onSave={saveCustomActions}
+            onUpload={onUpload}
           />
         ) : (
           <CustomWorkflowBtn

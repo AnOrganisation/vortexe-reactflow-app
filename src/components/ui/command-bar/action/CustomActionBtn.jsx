@@ -7,12 +7,17 @@ import {
   ModalFooter,
   useDisclosure,
   Textarea,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@nextui-org/react";
-import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { useState, useRef } from "react";
+import { ChevronDownIcon } from "../../nav/nav-items/ChevronDownIcon";
 
-const CustomActionBtn = ({ userID, onSave }) => {
+const CustomActionBtn = ({ userID, onSave, onUpload }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const inputRef = useRef(null);
 
   //State to store the custom action name
   const [customActionName, setCustomActionName] = useState("");
@@ -25,6 +30,111 @@ const CustomActionBtn = ({ userID, onSave }) => {
 
   //State to store the prompt value
   const [promptValue, setPromptValue] = useState("");
+
+  const tones = [
+    {
+      key: "marketing",
+      label: "Marketing",
+    },
+    {
+      key: "professional",
+      label: "Professional",
+    },
+    {
+      key: "hr",
+      label: "HR",
+    },
+    {
+      key: "casual",
+      label: "Casual",
+    },
+    {
+      key: "technical",
+      label: "Technical",
+    },
+    {
+      key: "artistic",
+      label: "Artistic",
+    },
+    {
+      key: "none",
+      label: "None",
+    },
+  ];
+
+  const formatting = [
+    {
+      key: "email",
+      label: "Email",
+    },
+    {
+      key: "paragraph",
+      label: "Paragraph",
+    },
+    {
+      key: "bullet point",
+      label: "Bullet Point",
+    },
+    {
+      key: "sections",
+      label: "Sections",
+    },
+    {
+      key: "MLA",
+      label: "MLA",
+    },
+    {
+      key: "single-sentence",
+      label: "Single Sentence",
+    },
+    {
+      key: "none",
+      label: "None",
+    },
+  ];
+
+  const toneMap = new Map([
+    ["marketing", "Marketing"],
+    ["professional", "Professional"],
+    ["hr", "HR"],
+    ["casual", "Casual"],
+    ["technical", "Technical"],
+    ["artistic", "Artistic"],
+    ["none", "None"],
+  ]);
+
+  const [selectedToneOption, setSelectedToneOption] = useState(
+    new Set(["Tone"])
+  );
+
+  const formattingMap = new Map([
+    ["email", "Email"],
+    ["paragraph", "Paragraph"],
+    ["bullet point", "Bullet Point"],
+    ["sections", "Sections"],
+    ["MLA", "MLA"],
+    ["single-sentence", "Single Sentence"],
+    ["none", "None"],
+  ]);
+
+  const [selectedFormattingOption, setSelectedFormattingOption] = useState(
+    new Set(["Formatting"])
+  );
+
+  const handleFileChange = (event) => {
+    if (event) {
+      let selectedFile = event.target.files[0];
+      const fileUrl = URL.createObjectURL(selectedFile);
+
+      const formData = new FormData();
+      formData.append("user_id", "default_user");
+      formData.append("file", selectedFile);
+      formData.append("workflow_id", "wrk1");
+
+      // Pass both fileUrl and formData to the parent component
+      onUpload(fileUrl, formData);
+    }
+  };
 
   const handlePromptValueChange = (event) => {
     const newValue = event.target.value;
@@ -55,21 +165,15 @@ const CustomActionBtn = ({ userID, onSave }) => {
       // Save the custom action prompt to the backend
       const customAction = {
         user_id: userID,
-        action_id: userID + uuidv4(),
+        action_id: null,
         action_name: customActionName,
         prompt: {
           instruction: promptValue,
         },
         action_type: "custom",
-        description: "this is a custom action",
+        description: "Custom Action",
       };
       onSave(customAction);
-      // Set the custom action in the parent component's state
-      // setCustomAction((prevActions) => {
-      //   const newActions = new Map(prevActions);
-      //   newActions.set(customActionName, promptValue);
-      //   return newActions;
-      // });
 
       // Reset the form and close the modal
       setCustomActionName("");
@@ -80,6 +184,17 @@ const CustomActionBtn = ({ userID, onSave }) => {
       // Close the modal after successful submission
       onClose();
     }
+  };
+
+  const handleToneSelectionChange = (keys) => {
+    const selectedToneKey = Array.from(keys)[0];
+    setSelectedToneOption(toneMap.get(selectedToneKey));
+  };
+
+  const handleFormattingSelectionChange = (keys) => {
+    console.log(keys);
+    const selectedFormattingKey = Array.from(keys)[0];
+    setSelectedFormattingOption(formattingMap.get(selectedFormattingKey));
   };
 
   return (
@@ -147,8 +262,39 @@ const CustomActionBtn = ({ userID, onSave }) => {
                       <span className="text-[#6366F1]">structure</span> you
                       expect.
                     </span>
-                    <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2">
-                      yo
+                    <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center">
+                      <div className="flex flex-col items-center justify-center w-32 h-32 border border-white rounded-lg cursor-pointer">
+                        <Button
+                          isIconOnly
+                          radius="md"
+                          type="submit"
+                          className="w-[128px] h-[129px] bg-transparent text-white focus:outline-none flex flex-col"
+                        >
+                          <p>Upload</p>
+                          <div className="w-6 h-6">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth="1.5"
+                              stroke="currentColor"
+                              className="w-6 h-6"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+                              />
+                            </svg>
+                          </div>
+                          <input
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            type="file"
+                            ref={inputRef}
+                            onChange={handleFileChange}
+                          />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                   <div className="w-[400px]">
@@ -157,10 +303,102 @@ const CustomActionBtn = ({ userID, onSave }) => {
                       <span className="text-[#6366F1]">content</span> you
                       expect.
                     </span>
-                    <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2">
-                      yo
+                    <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center">
+                      <div className="flex flex-col items-center justify-center w-32 h-32 border border-white rounded-lg cursor-pointer">
+                        <Button
+                          isIconOnly
+                          radius="md"
+                          type="submit"
+                          className="w-[128px] h-[129px] bg-transparent text-white focus:outline-none flex flex-col"
+                        >
+                          <p>Upload</p>
+                          <div className="w-6 h-6">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth="1.5"
+                              stroke="currentColor"
+                              className="w-6 h-6"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+                              />
+                            </svg>
+                          </div>
+                          <input
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            type="file"
+                            ref={inputRef}
+                            onChange={handleFileChange}
+                          />
+                        </Button>
+                      </div>
                     </div>
                   </div>
+                </div>
+                <div className="flex flex-row justify-between w-full mt-10">
+                  <Dropdown placement="bottom-end" className="bg-[#1F1F1F]">
+                    <DropdownTrigger>
+                      <Button
+                        isIconOnly
+                        className="flex flex-row items-center justify-evenly text-white h-10 w-[150px] bg-transparent border border-[#6366F1] rounded-full focus:outline-none"
+                      >
+                        <p>{selectedToneOption}</p>
+                        <ChevronDownIcon />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      aria-label="Dynamic Tones"
+                      items={tones}
+                      disallowEmptySelection
+                      selectedKeys={selectedToneOption}
+                      selectionMode="single"
+                      onSelectionChange={handleToneSelectionChange}
+                    >
+                      {(item) => (
+                        <DropdownItem
+                          key={item.key}
+                          color={item.key === "delete" ? "danger" : "default"}
+                          className={item.key === "delete" ? "text-danger" : ""}
+                        >
+                          {item.label}
+                        </DropdownItem>
+                      )}
+                    </DropdownMenu>
+                  </Dropdown>
+
+                  <Dropdown placement="bottom-end" className="bg-[#1F1F1F]">
+                    <DropdownTrigger>
+                      <Button
+                        isIconOnly
+                        className="flex flex-row items-center justify-evenly text-white h-10 w-[150px] bg-transparent border border-[#6366F1] rounded-full focus:outline-none"
+                      >
+                        <p>{selectedFormattingOption}</p>
+                        <ChevronDownIcon />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      aria-label="Dynamic Formats"
+                      items={formatting}
+                      disallowEmptySelection
+                      selectedKeys={selectedFormattingOption}
+                      selectionMode="single"
+                      onSelectionChange={handleFormattingSelectionChange}
+                    >
+                      {(item) => (
+                        <DropdownItem
+                          key={item.key}
+                          color={item.key === "delete" ? "danger" : "primary"}
+                          className={item.key === "delete" ? "text-danger" : ""}
+                        >
+                          {item.label}
+                        </DropdownItem>
+                      )}
+                    </DropdownMenu>
+                  </Dropdown>
                 </div>
               </ModalBody>
               <ModalFooter>
