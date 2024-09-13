@@ -2,12 +2,16 @@ import React from "react";
 import { Badge } from "@nextui-org/react";
 import CloseActionIcon from "./CloseAction";
 
-const UploadedActionFile = ({ file }) => {
+const UploadedActionFile = ({ file, onDelete }) => {
   const getShortenedFilename = () => {
     const parts = file.filename.split(".");
     const name = parts.slice(0, -1).join(".");
     const extension = parts.slice(-1);
     return `...${name.slice(-3)}.${extension}`;
+  };
+
+  const handleClick = () => {
+    onDelete(file.file_id);
   };
 
   return (
@@ -18,6 +22,7 @@ const UploadedActionFile = ({ file }) => {
           aria-label="Close"
           className="w-8 h-8 border border-[#6366F1] absolute appearance-none select-none -top-3 left-24 rtl:left-1 rtl:right-[unset] p-2 text-foreground-500 rounded-full hover:bg-red-500 active:bg-red-600 tap-highlight-transparent outline-none focus:outline-none"
           type="button"
+          onClick={handleClick}
         >
           <CloseActionIcon />
         </button>

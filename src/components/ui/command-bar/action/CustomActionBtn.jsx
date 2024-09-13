@@ -16,6 +16,7 @@ import React, { useState, useRef } from "react";
 import { ChevronDownIcon } from "../../nav/nav-items/ChevronDownIcon";
 import UploadedActionFile from "./UploadedActionFile";
 import axios from "axios";
+import "../../../../style.css";
 
 const CustomActionBtn = ({ userID, onSave }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -37,7 +38,7 @@ const CustomActionBtn = ({ userID, onSave }) => {
   const [structureViewType, setStructureViewType] = useState("upload");
 
   //State to toggle upload or file view for the content upload
-  const [contentViewType, setContentType] = useState("upload");
+  const [contentViewType, setContentViewType] = useState("upload");
 
   //State to store the uploaded strucuture files
   const [structureFiles, setStructureFiles] = useState([]);
@@ -152,27 +153,35 @@ const CustomActionBtn = ({ userID, onSave }) => {
   const handleFileChange = async (event, reference) => {
     if (event) {
       let selectedFile = event.target.files[0];
-      const fileUrl = URL.createObjectURL(selectedFile);
+      const fileUrl = URL.createObjectURL(selectedFile); // For local preview purposes
 
       const formData = new FormData();
       formData.append("user_id", userID);
       formData.append("file", selectedFile);
       formData.append("workflow_id", "wrk1");
 
-      const response = await onUpload(formData);
+      const response = await onUpload(formData); // Upload the file to the backend
 
       if (reference === "structure") {
         setStructureViewType("file");
-        setStructureFiles([
-          ...structureFiles,
-          { file_id: response.file_id, filename: response.filename },
-        ]);
-      } else {
-        setContentType("file");
-        setContentFiles([
-          ...contentFiles,
-          { file_id: response.file_id, filename: response.filename },
-        ]);
+
+        // Check if the file already exists in structureFiles before updating the state
+        if (!structureFiles.some((file) => file.file_id === response.file_id)) {
+          setStructureFiles((prevFiles) => [
+            ...prevFiles,
+            { file_id: response.file_id, filename: response.filename },
+          ]);
+        }
+      } else if (reference === "content") {
+        setContentViewType("file");
+
+        // Check if the file already exists in contentFiles before updating the state
+        if (!contentFiles.some((file) => file.file_id === response.file_id)) {
+          setContentFiles((prevFiles) => [
+            ...prevFiles,
+            { file_id: response.file_id, filename: response.filename },
+          ]);
+        }
       }
     }
   };
@@ -210,8 +219,8 @@ const CustomActionBtn = ({ userID, onSave }) => {
         action_name: customActionName,
         prompt: {
           instruction: promptValue,
-          structure: "Contained",
-          content: "Apple marketing strategy",
+          structure: JSON.stringify(structureFiles),
+          content: JSON.stringify(contentFiles),
           tone: selectedToneOption,
           formatting: selectedFormattingOption,
         },
@@ -315,7 +324,7 @@ const CustomActionBtn = ({ userID, onSave }) => {
                       <span className="text-[#6366F1]">structure</span> you
                       expect.
                     </span>
-                    <div className="w-full h-[165px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center overflow-x-scroll overflow-y-hidden">
+                    <div className="w-full h-[165px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center overflow-hidden">
                       {structureViewType === "upload" ? (
                         <div className="flex flex-col items-center justify-center w-32 h-32 border border-white rounded-lg cursor-pointer">
                           <Button
@@ -353,45 +362,48 @@ const CustomActionBtn = ({ userID, onSave }) => {
                         </div>
                       ) : (
                         <>
-                          <div className="flex flex-row items-center justify-center min-w-full gap-6 my-2 overflow-x-auto overflow-y-hidden">
-                            {structureFiles.map((file) => (
-                              <UploadedActionFile
-                                key={file.filename}
-                                file={file}
-                                onDelete={handleDeleteStructureFile}
-                              />
-                            ))}
-                            <Button
-                              isIconOnly
-                              radius="md"
-                              type="submit"
-                              className="flex flex-col my-3 text-white bg-transparent border border-white cursor-pointer w-28 h-28 focus:outline-none"
-                            >
-                              <div className="w-6 h-6">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth={1.5}
-                                  stroke="currentColor"
-                                  className="size-6"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M12 4.5v15m7.5-7.5h-15"
-                                  />
-                                </svg>
-                              </div>
-                              <input
-                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                type="file"
-                                ref={inputRef}
-                                onChange={(event) =>
-                                  handleFileChange(event, "structure")
-                                }
-                              />
-                            </Button>
+                          {/* Make this div scrollable horizontally */}
+                          <div className="flex flex-row w-full h-full gap-6 px-4 my-2 overflow-x-auto overflow-y-hidden custom-scrollbar">
+                            <div className="flex flex-row gap-6">
+                              {structureFiles.map((file) => (
+                                <UploadedActionFile
+                                  key={file.filename}
+                                  file={file}
+                                  onDelete={handleDeleteStructureFile}
+                                />
+                              ))}
+                              <Button
+                                isIconOnly
+                                radius="md"
+                                type="submit"
+                                className="flex flex-col my-3 text-white bg-transparent border border-white cursor-pointer w-28 h-28 focus:outline-none"
+                              >
+                                <div className="w-6 h-6">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="size-6"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M12 4.5v15m7.5-7.5h-15"
+                                    />
+                                  </svg>
+                                </div>
+                                <input
+                                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                  type="file"
+                                  ref={inputRef}
+                                  onChange={(event) =>
+                                    handleFileChange(event, "structure")
+                                  }
+                                />
+                              </Button>
+                            </div>
                           </div>
                         </>
                       )}
@@ -403,7 +415,7 @@ const CustomActionBtn = ({ userID, onSave }) => {
                       <span className="text-[#6366F1]">content</span> you
                       expect.
                     </span>
-                    <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center">
+                    <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center overflow-hidden">
                       {contentViewType === "upload" ? (
                         <div className="flex flex-col items-center justify-center w-32 h-32 border border-white rounded-lg cursor-pointer">
                           <Button
@@ -440,13 +452,50 @@ const CustomActionBtn = ({ userID, onSave }) => {
                           </Button>
                         </div>
                       ) : (
-                        contentFiles.map((file) => (
-                          <UploadedActionFile
-                            key={file.filename}
-                            file={file}
-                            onDelete={handleDeleteContentFile}
-                          />
-                        ))
+                        <>
+                          <div className="flex flex-row w-full h-full gap-6 px-4 my-2 overflow-x-auto overflow-y-hidden custom-scrollbar">
+                            <div className="flex flex-row gap-6">
+                              {contentFiles.map((file) => (
+                                <UploadedActionFile
+                                  key={file.filename}
+                                  file={file}
+                                  onDelete={handleDeleteContentFile}
+                                />
+                              ))}
+                              <Button
+                                isIconOnly
+                                radius="md"
+                                type="submit"
+                                className="flex flex-col my-3 text-white bg-transparent border border-white cursor-pointer w-28 h-28 focus:outline-none"
+                              >
+                                <div className="w-6 h-6">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="size-6"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M12 4.5v15m7.5-7.5h-15"
+                                    />
+                                  </svg>
+                                </div>
+                                <input
+                                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                  type="file"
+                                  ref={inputRef}
+                                  onChange={(event) =>
+                                    handleFileChange(event, "content")
+                                  }
+                                />
+                              </Button>
+                            </div>
+                          </div>
+                        </>
                       )}
                     </div>
                   </div>
@@ -503,7 +552,7 @@ const CustomActionBtn = ({ userID, onSave }) => {
                       {(item) => (
                         <DropdownItem
                           key={item.key}
-                          color={item.key === "delete" ? "danger" : "primary"}
+                          color={item.key === "delete" ? "danger" : "default"}
                           className={item.key === "delete" ? "text-danger" : ""}
                         >
                           {item.label}
