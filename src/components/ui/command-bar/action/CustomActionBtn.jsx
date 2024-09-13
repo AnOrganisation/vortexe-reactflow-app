@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import React, { useState, useRef } from "react";
 import { ChevronDownIcon } from "../../nav/nav-items/ChevronDownIcon";
+import UploadedActionFile from "./UploadedActionFile";
 import axios from "axios";
 
 const CustomActionBtn = ({ userID, onSave }) => {
@@ -31,6 +32,18 @@ const CustomActionBtn = ({ userID, onSave }) => {
 
   //State to store the prompt value
   const [promptValue, setPromptValue] = useState("");
+
+  //State to toggle upload or file view for the structure upload
+  const [structureViewType, setStructureViewType] = useState("upload");
+
+  //State to toggle upload or file view for the content upload
+  const [contentViewType, setContentType] = useState("upload");
+
+  //State to store the uploaded strucuture files
+  const [structureFiles, setStructureFiles] = useState([]);
+
+  //State to store the uploaded content files
+  const [contentFiles, setContentFiles] = useState([]);
 
   const tones = [
     {
@@ -122,35 +135,45 @@ const CustomActionBtn = ({ userID, onSave }) => {
     new Set(["Formatting"])
   );
 
-  const onUpload = async (fileUrl, formData) => {
+  const onUpload = async (formData) => {
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        formData
       );
       console.log("File uploaded successfully:", response.data);
+      return response.data;
     } catch (error) {
       console.error("Error: ", error);
+      return;
     }
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event, reference) => {
     if (event) {
       let selectedFile = event.target.files[0];
       const fileUrl = URL.createObjectURL(selectedFile);
 
       const formData = new FormData();
-      formData.append("user_id", "default_user");
+      formData.append("user_id", userID);
       formData.append("file", selectedFile);
       formData.append("workflow_id", "wrk1");
 
-      // Pass both fileUrl and formData to the parent component
-      onUpload(fileUrl, formData);
+      const response = await onUpload(formData);
+
+      if (reference === "structure") {
+        setStructureViewType("file");
+        setStructureFiles([
+          ...structureFiles,
+          { file_id: response.file_id, filename: response.filename },
+        ]);
+      } else {
+        setContentType("file");
+        setContentFiles([
+          ...contentFiles,
+          { file_id: response.file_id, filename: response.filename },
+        ]);
+      }
     }
   };
 
@@ -187,6 +210,10 @@ const CustomActionBtn = ({ userID, onSave }) => {
         action_name: customActionName,
         prompt: {
           instruction: promptValue,
+          structure: "Contained",
+          content: "Apple marketing strategy",
+          tone: selectedToneOption,
+          formatting: selectedFormattingOption,
         },
         action_type: "custom",
         description: "Custom Action",
@@ -213,6 +240,14 @@ const CustomActionBtn = ({ userID, onSave }) => {
     console.log(keys);
     const selectedFormattingKey = Array.from(keys)[0];
     setSelectedFormattingOption(formattingMap.get(selectedFormattingKey));
+  };
+
+  const handleDeleteStructureFile = (fileId) => {
+    setStructureFiles(structureFiles.filter((file) => file.file_id !== fileId));
+  };
+
+  const handleDeleteContentFile = (fileId) => {
+    setContentFiles(contentFiles.filter((file) => file.file_id !== fileId));
   };
 
   return (
@@ -280,39 +315,86 @@ const CustomActionBtn = ({ userID, onSave }) => {
                       <span className="text-[#6366F1]">structure</span> you
                       expect.
                     </span>
-                    <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center">
-                      <div className="flex flex-col items-center justify-center w-32 h-32 border border-white rounded-lg cursor-pointer">
-                        <Button
-                          isIconOnly
-                          radius="md"
-                          type="submit"
-                          className="w-[128px] h-[129px] bg-transparent text-white focus:outline-none flex flex-col"
-                        >
-                          <p>Upload</p>
-                          <div className="w-6 h-6">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth="1.5"
-                              stroke="currentColor"
-                              className="w-6 h-6"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+                    <div className="w-full h-[165px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center overflow-x-scroll overflow-y-hidden">
+                      {structureViewType === "upload" ? (
+                        <div className="flex flex-col items-center justify-center w-32 h-32 border border-white rounded-lg cursor-pointer">
+                          <Button
+                            isIconOnly
+                            radius="md"
+                            type="submit"
+                            className="w-[128px] h-[129px] bg-transparent text-white focus:outline-none flex flex-col cursor-pointer"
+                          >
+                            <p>Upload</p>
+                            <div className="w-6 h-6">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-6 h-6"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+                                />
+                              </svg>
+                            </div>
+                            <input
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                              type="file"
+                              ref={inputRef}
+                              onChange={(event) =>
+                                handleFileChange(event, "structure")
+                              }
+                            />
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex flex-row items-center justify-center min-w-full gap-6 my-2 overflow-x-auto overflow-y-hidden">
+                            {structureFiles.map((file) => (
+                              <UploadedActionFile
+                                key={file.filename}
+                                file={file}
+                                onDelete={handleDeleteStructureFile}
                               />
-                            </svg>
+                            ))}
+                            <Button
+                              isIconOnly
+                              radius="md"
+                              type="submit"
+                              className="flex flex-col my-3 text-white bg-transparent border border-white cursor-pointer w-28 h-28 focus:outline-none"
+                            >
+                              <div className="w-6 h-6">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="size-6"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M12 4.5v15m7.5-7.5h-15"
+                                  />
+                                </svg>
+                              </div>
+                              <input
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                type="file"
+                                ref={inputRef}
+                                onChange={(event) =>
+                                  handleFileChange(event, "structure")
+                                }
+                              />
+                            </Button>
                           </div>
-                          <input
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            type="file"
-                            ref={inputRef}
-                            onChange={handleFileChange}
-                          />
-                        </Button>
-                      </div>
+                        </>
+                      )}
                     </div>
                   </div>
                   <div className="w-[400px]">
@@ -322,38 +404,50 @@ const CustomActionBtn = ({ userID, onSave }) => {
                       expect.
                     </span>
                     <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center">
-                      <div className="flex flex-col items-center justify-center w-32 h-32 border border-white rounded-lg cursor-pointer">
-                        <Button
-                          isIconOnly
-                          radius="md"
-                          type="submit"
-                          className="w-[128px] h-[129px] bg-transparent text-white focus:outline-none flex flex-col"
-                        >
-                          <p>Upload</p>
-                          <div className="w-6 h-6">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth="1.5"
-                              stroke="currentColor"
-                              className="w-6 h-6"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
-                              />
-                            </svg>
-                          </div>
-                          <input
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            type="file"
-                            ref={inputRef}
-                            onChange={handleFileChange}
+                      {contentViewType === "upload" ? (
+                        <div className="flex flex-col items-center justify-center w-32 h-32 border border-white rounded-lg cursor-pointer">
+                          <Button
+                            isIconOnly
+                            radius="md"
+                            type="submit"
+                            className="w-[128px] h-[129px] bg-transparent text-white focus:outline-none flex flex-col cursor-pointer"
+                          >
+                            <p>Upload</p>
+                            <div className="w-6 h-6">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-6 h-6"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+                                />
+                              </svg>
+                            </div>
+                            <input
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                              type="file"
+                              ref={inputRef}
+                              onChange={(event) =>
+                                handleFileChange(event, "content")
+                              }
+                            />
+                          </Button>
+                        </div>
+                      ) : (
+                        contentFiles.map((file) => (
+                          <UploadedActionFile
+                            key={file.filename}
+                            file={file}
+                            onDelete={handleDeleteContentFile}
                           />
-                        </Button>
-                      </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>
