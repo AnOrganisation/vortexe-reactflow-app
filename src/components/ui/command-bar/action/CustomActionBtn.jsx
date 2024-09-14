@@ -11,12 +11,17 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Tabs,
+  Tab,
 } from "@nextui-org/react";
 import React, { useState, useRef } from "react";
 import { ChevronDownIcon } from "../../nav/nav-items/ChevronDownIcon";
 import UploadedActionFile from "./UploadedActionFile";
 import axios from "axios";
 import "../../../../style.css";
+
+import FileIcon from "./FileIcon";
+import TextIcon from "./TextIcon";
 
 const CustomActionBtn = ({ userID, onSave }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -136,6 +141,12 @@ const CustomActionBtn = ({ userID, onSave }) => {
     new Set(["Formatting"])
   );
 
+  //State to track the structure input value
+  const [structureInputValue, setStructureInputValue] = useState("");
+
+  //State to track the content input value
+  const [contentInputValue, setContentInputValue] = useState("");
+
   const onUpload = async (formData) => {
     try {
       const response = await axios.post(
@@ -203,6 +214,17 @@ const CustomActionBtn = ({ userID, onSave }) => {
     setCustomActionNameInvalid(newValue.length < 1);
   };
 
+  const resetForm = () => {
+    setCustomActionName("");
+    setPromptValue("");
+    setCustomActionNameInvalid(false);
+    setPromptInvalid(false);
+    setContentViewType("upload");
+    setStructureViewType("upload");
+    setStructureFiles([]);
+    setContentFiles([]);
+  };
+
   //Function to handle the submission of the custom action prompt
   const handleSave = () => {
     if (promptInvalid || promptValue === "") {
@@ -230,11 +252,7 @@ const CustomActionBtn = ({ userID, onSave }) => {
       onSave(customAction);
 
       // Reset the form and close the modal
-      setCustomActionName("");
-      setPromptValue("");
-      setCustomActionNameInvalid(false);
-      setPromptInvalid(false);
-
+      resetForm();
       // Close the modal after successful submission
       onClose();
     }
@@ -252,11 +270,22 @@ const CustomActionBtn = ({ userID, onSave }) => {
   };
 
   const handleDeleteStructureFile = (fileId) => {
+    //there is only one structure file, but we are keeping this logic in case there are more files in the future
     setStructureFiles(structureFiles.filter((file) => file.file_id !== fileId));
+    // since there is only one structure file, we will change the view type to "upload"
+    setStructureViewType("upload");
   };
 
   const handleDeleteContentFile = (fileId) => {
     setContentFiles(contentFiles.filter((file) => file.file_id !== fileId));
+  };
+
+  const handleStructureInputChange = (event) => {
+    setStructureInputValue(event.target.value);
+  };
+
+  const handleContentInputChange = (event) => {
+    setContentInputValue(event.target.value);
   };
 
   return (
@@ -324,89 +353,98 @@ const CustomActionBtn = ({ userID, onSave }) => {
                       <span className="text-[#6366F1]">structure</span> you
                       expect.
                     </span>
-                    <div className="w-full h-[165px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center overflow-hidden">
-                      {structureViewType === "upload" ? (
-                        <div className="flex flex-col items-center justify-center w-32 h-32 border border-white rounded-lg cursor-pointer">
-                          <Button
-                            isIconOnly
-                            radius="md"
-                            type="submit"
-                            className="w-[128px] h-[129px] bg-transparent text-white focus:outline-none flex flex-col cursor-pointer"
+                    <div className="w-full h-[230px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center overflow-hidden">
+                      <div className="flex flex-col items-center justify-center w-full mt-5 focus:outline-none">
+                        <Tabs
+                          aria-label="Options"
+                          color="default"
+                          variant="light"
+                          size="sm"
+                        >
+                          <Tab
+                            key="photos"
+                            title={
+                              <div className="flex items-center space-x-2">
+                                <FileIcon />
+                                <span>Upload</span>
+                              </div>
+                            }
+                            className="focus:outline-none"
                           >
-                            <p>Upload</p>
-                            <div className="w-6 h-6">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
-                                />
-                              </svg>
-                            </div>
-                            <input
-                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                              type="file"
-                              ref={inputRef}
-                              onChange={(event) =>
-                                handleFileChange(event, "structure")
-                              }
-                            />
-                          </Button>
-                        </div>
-                      ) : (
-                        <>
-                          {/* Make this div scrollable horizontally */}
-                          <div className="flex flex-row w-full h-full gap-6 px-4 my-2 overflow-x-auto overflow-y-hidden custom-scrollbar">
-                            <div className="flex flex-row gap-6">
-                              {structureFiles.map((file) => (
-                                <UploadedActionFile
-                                  key={file.filename}
-                                  file={file}
-                                  onDelete={handleDeleteStructureFile}
-                                />
-                              ))}
-                              <Button
-                                isIconOnly
-                                radius="md"
-                                type="submit"
-                                className="flex flex-col my-3 text-white bg-transparent border border-white cursor-pointer w-28 h-28 focus:outline-none"
-                              >
-                                <div className="w-6 h-6">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="size-6"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      d="M12 4.5v15m7.5-7.5h-15"
+                            {structureViewType === "upload" ? (
+                              <div className="flex flex-col items-center justify-center w-32 h-32 my-5 border border-white rounded-lg cursor-pointer">
+                                <Button
+                                  isIconOnly
+                                  radius="md"
+                                  type="submit"
+                                  className="w-[128px] h-[129px] bg-transparent text-white focus:outline-none flex flex-col cursor-pointer"
+                                >
+                                  <p>Upload</p>
+                                  <div className="w-6 h-6">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth="1.5"
+                                      stroke="currentColor"
+                                      className="w-6 h-6"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+                                      />
+                                    </svg>
+                                  </div>
+                                  <input
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    type="file"
+                                    ref={inputRef}
+                                    onChange={(event) =>
+                                      handleFileChange(event, "structure")
+                                    }
+                                  />
+                                </Button>
+                              </div>
+                            ) : (
+                              <>
+                                {/* Make this div scrollable horizontally */}
+                                <div className="flex flex-row items-center justify-center w-full h-full gap-6 px-4 my-2">
+                                  {structureFiles.map((file) => (
+                                    <UploadedActionFile
+                                      key={file.filename}
+                                      file={file}
+                                      onDelete={() => {
+                                        handleDeleteStructureFile(file.file_id);
+                                      }}
                                     />
-                                  </svg>
+                                  ))}
                                 </div>
-                                <input
-                                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                  type="file"
-                                  ref={inputRef}
-                                  onChange={(event) =>
-                                    handleFileChange(event, "structure")
-                                  }
-                                />
-                              </Button>
-                            </div>
-                          </div>
-                        </>
-                      )}
+                              </>
+                            )}
+                          </Tab>
+                          <Tab
+                            key="type"
+                            title={
+                              <div className="flex items-center space-x-2">
+                                <TextIcon />
+                                <span>Text</span>
+                              </div>
+                            }
+                            className="focus:outline-none"
+                          >
+                            <Textarea
+                              variant="bordered"
+                              size="lg"
+                              labelPlacement="outside"
+                              placeholder="Describe the structure you want to model the response after"
+                              onChange={handleStructureInputChange}
+                              value={structureInputValue}
+                              className="min-w-xl"
+                            />
+                          </Tab>
+                        </Tabs>
+                      </div>
                     </div>
                   </div>
                   <div className="w-[400px]">
@@ -415,155 +453,215 @@ const CustomActionBtn = ({ userID, onSave }) => {
                       <span className="text-[#6366F1]">content</span> you
                       expect.
                     </span>
-                    <div className="w-full h-[150px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center overflow-hidden">
-                      {contentViewType === "upload" ? (
-                        <div className="flex flex-col items-center justify-center w-32 h-32 border border-white rounded-lg cursor-pointer">
-                          <Button
-                            isIconOnly
-                            radius="md"
-                            type="submit"
-                            className="w-[128px] h-[129px] bg-transparent text-white focus:outline-none flex flex-col cursor-pointer"
+                    <div className="w-full h-[230px] border border-[#6366F1] rounded-lg mt-2 flex flex-col justify-center items-center overflow-hidden">
+                      <div className="flex flex-col items-center justify-center w-full mt-5 focus:outline-none">
+                        <Tabs
+                          aria-label="Options"
+                          color="default"
+                          variant="light"
+                          size="sm"
+                        >
+                          <Tab
+                            key="photos"
+                            title={
+                              <div className="flex items-center space-x-2">
+                                <FileIcon />
+                                <span>Upload</span>
+                              </div>
+                            }
+                            className="focus:outline-none "
                           >
-                            <p>Upload</p>
-                            <div className="w-6 h-6">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
-                                />
-                              </svg>
-                            </div>
-                            <input
-                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                              type="file"
-                              ref={inputRef}
-                              onChange={(event) =>
-                                handleFileChange(event, "content")
-                              }
-                            />
-                          </Button>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="flex flex-row w-full h-full gap-6 px-4 my-2 overflow-x-auto overflow-y-hidden custom-scrollbar">
-                            <div className="flex flex-row gap-6">
-                              {contentFiles.map((file) => (
-                                <UploadedActionFile
-                                  key={file.filename}
-                                  file={file}
-                                  onDelete={handleDeleteContentFile}
-                                />
-                              ))}
-                              <Button
-                                isIconOnly
-                                radius="md"
-                                type="submit"
-                                className="flex flex-col my-3 text-white bg-transparent border border-white cursor-pointer w-28 h-28 focus:outline-none"
-                              >
-                                <div className="w-6 h-6">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="size-6"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      d="M12 4.5v15m7.5-7.5h-15"
-                                    />
-                                  </svg>
+                            {contentViewType === "upload" ? (
+                              <div className="flex flex-col items-center justify-center w-32 h-32 my-5 border border-white rounded-lg cursor-pointer">
+                                <Button
+                                  isIconOnly
+                                  radius="md"
+                                  type="submit"
+                                  className="w-[128px] h-[129px] bg-transparent text-white focus:outline-none flex flex-col cursor-pointer"
+                                >
+                                  <p>Upload</p>
+                                  <div className="w-6 h-6">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth="1.5"
+                                      stroke="currentColor"
+                                      className="w-6 h-6"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+                                      />
+                                    </svg>
+                                  </div>
+                                  <input
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    type="file"
+                                    ref={inputRef}
+                                    onChange={(event) =>
+                                      handleFileChange(event, "content")
+                                    }
+                                  />
+                                </Button>
+                              </div>
+                            ) : (
+                              <>
+                                <div className="flex flex-row w-full h-full gap-6 px-4 my-5 overflow-x-auto overflow-y-hidden custom-scrollbar">
+                                  <div className="flex flex-row gap-6">
+                                    {contentFiles.map((file) => (
+                                      <UploadedActionFile
+                                        key={file.filename}
+                                        file={file}
+                                        onDelete={handleDeleteContentFile}
+                                      />
+                                    ))}
+                                    <Button
+                                      isIconOnly
+                                      radius="md"
+                                      type="submit"
+                                      className="flex flex-col my-3 text-white bg-transparent border border-white cursor-pointer w-28 h-28 focus:outline-none"
+                                    >
+                                      <div className="w-6 h-6">
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          strokeWidth={1.5}
+                                          stroke="currentColor"
+                                          className="size-6"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M12 4.5v15m7.5-7.5h-15"
+                                          />
+                                        </svg>
+                                      </div>
+                                      <input
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        type="file"
+                                        ref={inputRef}
+                                        onChange={(event) =>
+                                          handleFileChange(event, "content")
+                                        }
+                                      />
+                                    </Button>
+                                  </div>
                                 </div>
-                                <input
-                                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                  type="file"
-                                  ref={inputRef}
-                                  onChange={(event) =>
-                                    handleFileChange(event, "content")
-                                  }
-                                />
-                              </Button>
-                            </div>
-                          </div>
-                        </>
-                      )}
+                              </>
+                            )}
+                          </Tab>
+                          <Tab
+                            key="type"
+                            title={
+                              <div className="flex items-center space-x-2">
+                                <TextIcon />
+                                <span>Text</span>
+                              </div>
+                            }
+                            className="focus:outline-none"
+                          >
+                            <Textarea
+                              variant="bordered"
+                              size="lg"
+                              labelPlacement="outside"
+                              placeholder="Describe the content you want in the response"
+                              onChange={handleContentInputChange}
+                              value={contentInputValue}
+                              className="min-w-xl"
+                            />
+                          </Tab>
+                        </Tabs>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div className="mt-2">
+                  <p className="font-semibold">
+                    Warning: Text input will be ignored if a file was already
+                    uploaded
+                  </p>
+                </div>
                 <div className="flex flex-row justify-between w-full mt-10">
-                  <Dropdown placement="bottom-end" className="bg-[#1F1F1F]">
-                    <DropdownTrigger>
-                      <Button
-                        isIconOnly
-                        className="flex flex-row items-center justify-evenly text-white h-10 w-[150px] bg-transparent border border-[#6366F1] rounded-full focus:outline-none"
-                      >
-                        <p>{selectedToneOption}</p>
-                        <ChevronDownIcon />
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      aria-label="Dynamic Tones"
-                      items={tones}
-                      disallowEmptySelection
-                      selectedKeys={selectedToneOption}
-                      selectionMode="single"
-                      onSelectionChange={handleToneSelectionChange}
-                    >
-                      {(item) => (
-                        <DropdownItem
-                          key={item.key}
-                          color={item.key === "delete" ? "danger" : "default"}
-                          className={item.key === "delete" ? "text-danger" : ""}
+                  <div className="flex flex-row items-center justify-center w-[39.5%]">
+                    <Dropdown placement="bottom-end" className="bg-[#1F1F1F]">
+                      <DropdownTrigger>
+                        <Button
+                          isIconOnly
+                          className="flex flex-row items-center justify-evenly text-white h-10 w-[150px] bg-transparent border border-[#6366F1] rounded-full focus:outline-none"
                         >
-                          {item.label}
-                        </DropdownItem>
-                      )}
-                    </DropdownMenu>
-                  </Dropdown>
-
-                  <Dropdown placement="bottom-end" className="bg-[#1F1F1F]">
-                    <DropdownTrigger>
-                      <Button
-                        isIconOnly
-                        className="flex flex-row items-center justify-evenly text-white h-10 w-[150px] bg-transparent border border-[#6366F1] rounded-full focus:outline-none"
+                          <p>{selectedToneOption}</p>
+                          <ChevronDownIcon />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu
+                        aria-label="Dynamic Tones"
+                        items={tones}
+                        disallowEmptySelection
+                        selectedKeys={selectedToneOption}
+                        selectionMode="single"
+                        onSelectionChange={handleToneSelectionChange}
                       >
-                        <p>{selectedFormattingOption}</p>
-                        <ChevronDownIcon />
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      aria-label="Dynamic Formats"
-                      items={formatting}
-                      disallowEmptySelection
-                      selectedKeys={selectedFormattingOption}
-                      selectionMode="single"
-                      onSelectionChange={handleFormattingSelectionChange}
-                    >
-                      {(item) => (
-                        <DropdownItem
-                          key={item.key}
-                          color={item.key === "delete" ? "danger" : "default"}
-                          className={item.key === "delete" ? "text-danger" : ""}
+                        {(item) => (
+                          <DropdownItem
+                            key={item.key}
+                            color={item.key === "delete" ? "danger" : "default"}
+                            className={
+                              item.key === "delete" ? "text-danger" : ""
+                            }
+                          >
+                            {item.label}
+                          </DropdownItem>
+                        )}
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
+                  <div className="flex flex-row items-center justify-center w-[39.5%]">
+                    <Dropdown placement="bottom-end" className="bg-[#1F1F1F]">
+                      <DropdownTrigger>
+                        <Button
+                          isIconOnly
+                          className="flex flex-row items-center justify-evenly text-white h-10 w-[150px] bg-transparent border border-[#6366F1] rounded-full focus:outline-none"
                         >
-                          {item.label}
-                        </DropdownItem>
-                      )}
-                    </DropdownMenu>
-                  </Dropdown>
+                          <p>{selectedFormattingOption}</p>
+                          <ChevronDownIcon />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu
+                        aria-label="Dynamic Formats"
+                        items={formatting}
+                        disallowEmptySelection
+                        selectedKeys={selectedFormattingOption}
+                        selectionMode="single"
+                        onSelectionChange={handleFormattingSelectionChange}
+                      >
+                        {(item) => (
+                          <DropdownItem
+                            key={item.key}
+                            color={item.key === "delete" ? "danger" : "default"}
+                            className={
+                              item.key === "delete" ? "text-danger" : ""
+                            }
+                          >
+                            {item.label}
+                          </DropdownItem>
+                        )}
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={() => {
+                    resetForm();
+                    onClose();
+                  }}
+                >
                   Close
                 </Button>
                 <Button
