@@ -223,6 +223,8 @@ const CustomActionBtn = ({ userID, onSave }) => {
     setStructureViewType("upload");
     setStructureFiles([]);
     setContentFiles([]);
+    setStructureInputValue("");
+    setContentInputValue("");
   };
 
   //Function to handle the submission of the custom action prompt
@@ -241,10 +243,18 @@ const CustomActionBtn = ({ userID, onSave }) => {
         action_name: customActionName,
         prompt: {
           instruction: promptValue,
-          structure: JSON.stringify(structureFiles),
-          content: JSON.stringify(contentFiles),
-          tone: selectedToneOption,
-          formatting: selectedFormattingOption,
+          structure:
+            structureFiles.length >= 1
+              ? JSON.stringify(structureFiles)
+              : structureInputValue,
+          content:
+            contentFiles.length >= 1
+              ? JSON.stringify(contentFiles)
+              : contentInputValue,
+          tone: selectedToneOption.has("Tone") ? "None" : selectedToneOption,
+          formatting: selectedFormattingOption.add("Formatting")
+            ? "None"
+            : selectedFormattingOption,
         },
         action_type: "custom",
         description: "Custom Action",
@@ -469,7 +479,7 @@ const CustomActionBtn = ({ userID, onSave }) => {
                                 <span>Upload</span>
                               </div>
                             }
-                            className="focus:outline-none "
+                            className="focus:outline-none"
                           >
                             {contentViewType === "upload" ? (
                               <div className="flex flex-col items-center justify-center w-32 h-32 my-5 border border-white rounded-lg cursor-pointer">
@@ -507,52 +517,53 @@ const CustomActionBtn = ({ userID, onSave }) => {
                                 </Button>
                               </div>
                             ) : (
-                              <>
-                                <div className="flex flex-row w-full h-full gap-6 px-4 my-5 overflow-x-auto overflow-y-hidden custom-scrollbar">
-                                  <div className="flex flex-row gap-6">
-                                    {contentFiles.map((file) => (
-                                      <UploadedActionFile
-                                        key={file.filename}
-                                        file={file}
-                                        onDelete={handleDeleteContentFile}
-                                      />
-                                    ))}
-                                    <Button
-                                      isIconOnly
-                                      radius="md"
-                                      type="submit"
-                                      className="flex flex-col my-3 text-white bg-transparent border border-white cursor-pointer w-28 h-28 focus:outline-none"
-                                    >
-                                      <div className="w-6 h-6">
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          strokeWidth={1.5}
-                                          stroke="currentColor"
-                                          className="size-6"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M12 4.5v15m7.5-7.5h-15"
-                                          />
-                                        </svg>
-                                      </div>
-                                      <input
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                        type="file"
-                                        ref={inputRef}
-                                        onChange={(event) =>
-                                          handleFileChange(event, "content")
-                                        }
-                                      />
-                                    </Button>
-                                  </div>
+                              <div className="w-full overflow-x-auto">
+                                {" "}
+                                {/* Ensure overflow works here */}
+                                <div className="flex flex-row gap-6 px-4 my-5 overflow-x-auto custom-scrollbar">
+                                  {contentFiles.map((file) => (
+                                    <UploadedActionFile
+                                      key={file.filename}
+                                      file={file}
+                                      onDelete={handleDeleteContentFile}
+                                    />
+                                  ))}
+                                  <Button
+                                    isIconOnly
+                                    radius="md"
+                                    type="submit"
+                                    className="flex flex-col my-3 text-white bg-transparent border border-white cursor-pointer w-28 h-28 focus:outline-none"
+                                  >
+                                    <div className="w-6 h-6">
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                        className="size-6"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          d="M12 4.5v15m7.5-7.5h-15"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <input
+                                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                      type="file"
+                                      ref={inputRef}
+                                      onChange={(event) =>
+                                        handleFileChange(event, "content")
+                                      }
+                                    />
+                                  </Button>
                                 </div>
-                              </>
+                              </div>
                             )}
                           </Tab>
+
                           <Tab
                             key="type"
                             title={
