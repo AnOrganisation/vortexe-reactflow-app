@@ -251,13 +251,15 @@ const CustomActionBtn = ({ userID, onSave }) => {
             contentFiles.length >= 1
               ? JSON.stringify(contentFiles)
               : contentInputValue,
-          tone: selectedToneOption.has("Tone") ? "None" : selectedToneOption,
-          formatting: selectedFormattingOption.add("Formatting")
-            ? "None"
-            : selectedFormattingOption,
+          tone: selectedToneOption === "Tone" ? "None" : selectedToneOption,
+          formatting:
+            selectedFormattingOption === "Formatting"
+              ? "None"
+              : selectedFormattingOption,
         },
         action_type: "custom",
         description: "Custom Action",
+        model_configuration: null,
       };
       onSave(customAction);
 
