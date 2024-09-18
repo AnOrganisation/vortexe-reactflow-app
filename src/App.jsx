@@ -1,5 +1,5 @@
 import React from "react";
-import { Image } from "@nextui-org/react";
+import { Image, Button } from "@nextui-org/react";
 import { useCallback, useState, useEffect } from "react";
 import {
   ReactFlow,
@@ -18,6 +18,7 @@ import ColorPreview from "./ColorPreview.jsx";
 import ActionNode from "./components/nodes/ActionNode.jsx";
 import FileNode from "./components/nodes/FileNode.jsx";
 import OutputNode from "./components/nodes/OutputNode.jsx";
+import DefaultInputNode from "./components/nodes/DefaultInputNode.jsx";
 
 import Navbar from "./components/ui/nav/Navbar.jsx";
 import CommandBar from "./components/ui/command-bar/CommandBar.jsx";
@@ -36,6 +37,7 @@ const nodeTypes = {
   ActionNode,
   FileNode,
   OutputNode,
+  DefaultInputNode,
 };
 
 const initialNodes = (onNodeClick, activeNodeID) => {
@@ -214,6 +216,20 @@ const App = () => {
     setAlert(false);
   };
 
+  const handlePress = () => {
+    const newNodes = [...nodes];
+    const newNode = {
+      type: "DefaultInputNode",
+      id: "default-input",
+      position: { x: 50, y: 50 },
+      data: {
+        label: "Input Node",
+      },
+    };
+    newNodes.push(newNode);
+    setNodes(newNodes);
+  };
+
   const defaultEdgeOptions = { animated: true, style: { stroke: "#006fee" } };
 
   const appContent = (
@@ -235,6 +251,11 @@ const App = () => {
       <div className="absolute left-0 z-20 mt-5 ml-4">
         <Image src={Logo} alt="Vortexe Logo" className="w-10 h-10"></Image>
       </div>
+      <div className="absolute z-20 top-5 right-96 ">
+        <Button className="focus:outline-none" onPress={handlePress}>
+          +
+        </Button>
+      </div>
       {alert && (
         <Alert
           message={alertMessage}
@@ -242,6 +263,9 @@ const App = () => {
           onAlertClose={onAlertClose}
         ></Alert>
       )}
+      <div className="absolute z-30 top-80 right-40">
+        {/* <DefaultInputNode /> */}
+      </div>
       <ReactFlow
         nodeTypes={nodeTypes}
         edgeTypes={{ custom: WorkflowEdge }}
@@ -253,6 +277,7 @@ const App = () => {
         onKeyDown={handleKeyDown}
         onNodeClick={onNodeClick}
         nodesDraggable={true}
+        edgesDraggable={true}
         panOnScroll={false}
         snapToGrid={true}
         defaultEdgeOptions={defaultEdgeOptions}

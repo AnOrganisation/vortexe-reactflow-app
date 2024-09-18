@@ -170,7 +170,7 @@ const CommandBar = ({
     <div className="absolute z-20 w-48 max-h-screen text-white rounded-lg shadow-lg cursor-pointer bg-[#1F1F1F] left-5 top-28 flex flex-col items-center border border-[#6366F1]">
       <input
         type="text"
-        className="w-[148px] h-[14px] p-2 mb-4 text-white border-none rounded-full outline-none mt-5 bg-[#DDDDDD66] bg-opacity-40 text-xs"
+        className="w-[148px] h-[14px] p-3 mb-4 text-white border-none rounded-full outline-none mt-5 bg-[#3837376f] bg-opacity-40 text-xs"
         placeholder="Search an action"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
