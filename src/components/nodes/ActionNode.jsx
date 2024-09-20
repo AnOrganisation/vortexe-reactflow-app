@@ -17,7 +17,7 @@ function ActionNode({ id, data }) {
             onPress={onOpen}
             className="bg-[#6366F1] text-white rounded-full focus:outline-none hover:border-none mt-8"
           >
-            Set Up
+            Edit
           </Button>
         </div>
         <Handle type="target" position={Position.Left} />

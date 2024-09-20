@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Command from "./action/Command";
-import Workflow from "./workflow/Workflow";
-import { Button } from "@nextui-org/react";
+
 import { Listbox, ListboxItem } from "@nextui-org/react";
 import { ListboxWrapper } from "./action/ListboxWrapper";
-import CustomWorkflowBtn from "./workflow/CustomWorkflowBtn";
+
 import CustomActionBtn from "./action/CustomActionBtn";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
@@ -25,6 +24,9 @@ const CommandBar = ({
   setAlertMessage,
   setAlertType,
   userID,
+  showForNodeAddition,
+  onCommandSelected,
+  newNodeData,
 }) => {
   // State to store the filtered commands
   const [filteredCommands, setFilteredCommands] = useState(new Map([]));
@@ -166,8 +168,28 @@ const CommandBar = ({
     }
   }, [searchQuery, commands]);
 
+  const isNodeAdditionMode = showForNodeAddition && newNodeData;
+
+  // Adjust the style based on newNodeData.screenPosition
+  const commandBarStyle = {
+    position: "absolute",
+    zIndex: 20,
+    width: "200px", // Adjust as needed
+    maxHeight: "screen", // Adjust as needed
+    backgroundColor: "#1F1F1F",
+    borderRadius: "8px",
+    border: "1px solid #6366F1",
+    cursor: "pointer",
+    left: isNodeAdditionMode ? `${newNodeData.screenPosition.x}px` : "5px",
+    top: isNodeAdditionMode ? `${newNodeData.screenPosition.y}px` : "28px",
+    display: "block",
+  };
+
   return (
-    <div className="absolute z-20 w-48 max-h-screen text-white rounded-lg shadow-lg cursor-pointer bg-[#1F1F1F] left-5 top-28 flex flex-col items-center border border-[#6366F1]">
+    <div
+      style={commandBarStyle}
+      className="absolute z-20 w-48 max-h-screen text-white rounded-lg shadow-lg cursor-pointer bg-[#1F1F1F] left-5 top-28 flex flex-col items-center border border-[#6366F1]"
+    >
       <input
         type="text"
         className="w-[148px] h-[14px] p-3 mb-4 text-white border-none rounded-full outline-none mt-5 bg-[#3837376f] bg-opacity-40 text-xs"
@@ -196,7 +218,7 @@ const CommandBar = ({
                     <Command
                       key={index}
                       commandName={name}
-                      prompt={prompt.ins}
+                      prompt={commands.get(key).prompt}
                       commandID={`commandBar-` + uuidv4()}
                       activeFileContent={activeFileContent}
                       activeNodeID={activeNodeID}
@@ -206,6 +228,7 @@ const CommandBar = ({
                       setAlert={setAlert}
                       setAlertMessage={setAlertMessage}
                       setAlertType={setAlertType}
+                      onCommandSelected={onCommandSelected}
                     />
                   </ListboxItem>
                 )

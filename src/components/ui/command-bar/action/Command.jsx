@@ -19,6 +19,7 @@ const Command = ({
   setAlert,
   setAlertMessage,
   setAlertType,
+  onCommandSelected,
 }) => {
   const runCommand = async () => {
     try {
@@ -35,86 +36,98 @@ const Command = ({
     }
   };
 
-  const handlePress = async () => {
-    if (isActivatedFromCustomWorkflowModal) {
-      console.log(
-        `Adding command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
-      );
+  // const handlePress = async () => {
+  //   if (isActivatedFromCustomWorkflowModal) {
+  //     console.log(
+  //       `Adding command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
+  //     );
 
-      // Find the last node of the same type
-      const lastNode = nodes
-        .filter((node) => node.type === "ActionNode")
-        .slice(-1)[0];
+  //     // Find the last node of the same type
+  //     const lastNode = nodes
+  //       .filter((node) => node.type === "ActionNode")
+  //       .slice(-1)[0];
 
-      // Calculate the new y-position for the new node based on the last node's position
-      const newYPosition = lastNode ? lastNode.position.y + 60 : 0;
+  //     // Calculate the new y-position for the new node based on the last node's position
+  //     const newYPosition = lastNode ? lastNode.position.y + 60 : 0;
 
-      // Define the new node
-      const newActionNode = {
-        id: uuidv4(), // Generate a unique id
-        type: "ActionNode", // Type of node
-        data: {
-          label: `${commandName}`,
-          //value: prompt,
-          onNodesDelete: onNodesDelete,
-        },
-        position: { x: 100, y: newYPosition },
+  //     // Define the new node
+  //     const newActionNode = {
+  //       id: uuidv4(), // Generate a unique id
+  //       type: "ActionNode", // Type of node
+  //       data: {
+  //         label: `${commandName}`,
+  //         //value: prompt,
+  //         onNodesDelete: onNodesDelete,
+  //       },
+  //       position: { x: 100, y: newYPosition },
+  //     };
+
+  //     // Define the new edge, if there is a last node of the same type
+  //     const newEdge = lastNode
+  //       ? {
+  //           id: uuidv4(), // Generate a unique id for the edge
+  //           source: lastNode.id,
+  //           target: newActionNode.id,
+  //         }
+  //       : null;
+
+  //     // Add the new node to the nodes array
+  //     setNodes((nds) => [...nds, newActionNode]);
+
+  //     // Add the new edge to the edges array if it exists
+  //     if (newEdge) {
+  //       setEdges((eds) => [...eds, newEdge]);
+  //     }
+  //   } else {
+  //     /**
+  //      * *Creation of the output node to display the result of the command when triggered*
+  //      */
+
+  //     //find the node that the command was ran on by id
+  //     const triggerNode = fileNodes.find((node) => node.id === activeNodeID);
+
+  //     if (!(triggerNode && triggerNode.type === "FileNode")) {
+  //       setAlertMessage("Command can only be executed on a File");
+  //       setAlertType("danger");
+  //       setAlert(true);
+  //     } else {
+  //       console.log(
+  //         `Executing command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
+  //       );
+  //       const result = await runCommand();
+  //       const newOutputNode = {
+  //         id: uuidv4(),
+  //         type: "OutputNode",
+  //         data: {
+  //           value: result.summary,
+  //           label: commandName,
+  //           source: "command",
+  //         },
+  //         position: {
+  //           x: triggerNode.position.x + 100,
+  //           y: triggerNode.position.y,
+  //         },
+  //       };
+  //       const newFileEdge = {
+  //         id: `${triggerNode.id}-${newOutputNode.id}`,
+  //         source: triggerNode.id,
+  //         target: newOutputNode.id,
+  //       };
+  //       setFileNodes((nds) => [...nds, newOutputNode]);
+  //       setFileEdges((eds) => [...eds, newFileEdge]);
+  //     }
+  //   }
+  // };
+  const handlePress = () => {
+    if (onCommandSelected) {
+      // Node addition mode
+      const commandData = {
+        commandName,
+        prompt,
+        commandID,
+        // Include any other data you need
       };
-
-      // Define the new edge, if there is a last node of the same type
-      const newEdge = lastNode
-        ? {
-            id: uuidv4(), // Generate a unique id for the edge
-            source: lastNode.id,
-            target: newActionNode.id,
-          }
-        : null;
-
-      // Add the new node to the nodes array
-      setNodes((nds) => [...nds, newActionNode]);
-
-      // Add the new edge to the edges array if it exists
-      if (newEdge) {
-        setEdges((eds) => [...eds, newEdge]);
-      }
-    } else {
-      /**
-       * *Creation of the output node to display the result of the command when triggered*
-       */
-
-      //find the node that the command was ran on by id
-      const triggerNode = fileNodes.find((node) => node.id === activeNodeID);
-
-      if (!(triggerNode && triggerNode.type === "FileNode")) {
-        setAlertMessage("Command can only be executed on a File");
-        setAlertType("danger");
-        setAlert(true);
-      } else {
-        console.log(
-          `Executing command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
-        );
-        const result = await runCommand();
-        const newOutputNode = {
-          id: uuidv4(),
-          type: "OutputNode",
-          data: {
-            value: result.summary,
-            label: commandName,
-            source: "command",
-          },
-          position: {
-            x: triggerNode.position.x + 100,
-            y: triggerNode.position.y,
-          },
-        };
-        const newFileEdge = {
-          id: `${triggerNode.id}-${newOutputNode.id}`,
-          source: triggerNode.id,
-          target: newOutputNode.id,
-        };
-        setFileNodes((nds) => [...nds, newOutputNode]);
-        setFileEdges((eds) => [...eds, newFileEdge]);
-      }
+      onCommandSelected(commandData);
     }
   };
 

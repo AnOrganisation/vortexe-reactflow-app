@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useState, useCallback, useRef } from "react";
 import { Image, Button } from "@nextui-org/react";
 import {
@@ -69,6 +70,11 @@ const App = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [connection, setConnection] = useState(null);
 
+  // New state variables
+  const [showCommandBarForNodeAddition, setShowCommandBarForNodeAddition] =
+    useState(false);
+  const [newNodeData, setNewNodeData] = useState(null);
+
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
@@ -87,38 +93,67 @@ const App = () => {
       const targetIsPane = event.target.classList.contains("react-flow__pane");
 
       if (targetIsPane && reactFlowInstance && connection) {
-        const newNodeId = getId();
         const flowPosition = reactFlowInstance.project({
           x: event.clientX,
           y: event.clientY,
         });
 
-        const newNode = {
-          type: "ActionNode",
-          id: newNodeId,
-          position: flowPosition,
-          data: { label: `Node ${newNodeId}` },
-          origin: [0.5, 0.0],
+        // Store the screen position
+        const screenPosition = {
+          x: event.clientX,
+          y: event.clientY,
         };
 
-        const edgeId = `e-${getId()}`;
-        setNodes((nds) => nds.concat(newNode));
-        setEdges((eds) =>
-          eds.concat({
-            id: edgeId,
-            source: connection.source,
-            sourceHandle: connection.sourceHandle,
-            target: newNodeId,
-            targetHandle: null,
-          })
-        );
+        // Store the data needed to add the node later
+        setNewNodeData({
+          position: flowPosition,
+          screenPosition: screenPosition,
+          source: connection.source,
+          sourceHandle: connection.sourceHandle,
+        });
+
+        // Show the command bar
+        setShowCommandBarForNodeAddition(true);
       }
 
       // Reset the connection state after handling
       setConnection(null);
     },
-    [reactFlowInstance, connection, setNodes, setEdges]
+    [reactFlowInstance, connection]
   );
+
+  // Function to handle command selection from the command bar
+  const handleCommandSelected = (commandData) => {
+    // Use the stored newNodeData and the commandData to add the node
+    const newNodeId = getId();
+
+    const newNode = {
+      type: "ActionNode", // or use commandData to determine the type
+      id: newNodeId,
+      position: newNodeData.position,
+      data: { label: `${commandData.commandName}` },
+      origin: [0.5, 0.0],
+    };
+
+    const edgeId = `e-${getId()}`;
+
+    setNodes((nds) => nds.concat(newNode));
+    setEdges((eds) =>
+      eds.concat({
+        id: edgeId,
+        source: newNodeData.source,
+        sourceHandle: newNodeData.sourceHandle,
+        target: newNodeId,
+        targetHandle: null,
+      })
+    );
+
+    // Hide the command bar
+    setShowCommandBarForNodeAddition(false);
+
+    // Clear the newNodeData
+    setNewNodeData(null);
+  };
 
   // Custom keydown handler
   const handleKeyDown = (event) => {
@@ -135,10 +170,70 @@ const App = () => {
 
   const onNodeClick = (event, node) => {
     // Logic for handling node click
+    // Determine if the node will be active after this click
+    const isActiveAfterClick = !node.data.isNodeActive;
+
+    setNodes((nds) =>
+      nds.map((n) => ({
+        ...n,
+        data: {
+          ...n.data,
+          isNodeActive: n.id === node.id ? isActiveAfterClick : false,
+        },
+      }))
+    );
+
+    // Set the active content only if the node becomes active after the click
+    if (node.type === "FileNode") {
+      setActiveFileContent(isActiveAfterClick ? node.data.content : null);
+    }
+
+    // Set the activeNodeID based on the new active state
+    setActiveNodeID(isActiveAfterClick ? node.id : null);
   };
 
   const onUpload = async (fileUrl, formData) => {
     // Logic for handling file upload
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("File Upload Success:");
+
+      // Generate PDF from the raw content
+      const pdfUrl = fileUrl;
+
+      // Find the last node of the same type
+      const lastNode = nodes
+        .filter((node) => node.type === "FileNode")
+        .slice(-1)[0];
+
+      // Calculate the new x-position for the new node based on the last node's position
+      const newXPosition = lastNode ? lastNode.position.x + 150 : 0;
+
+      const newNodes = [...nodes];
+      const newNode = {
+        type: "FileNode",
+        id: response.data.file_id,
+        position: { x: newXPosition, y: 100 },
+        data: {
+          label: response.data.filename,
+          file: pdfUrl,
+          content: response.data.content,
+          isNodeActive: false,
+        },
+      };
+      newNodes.push(newNode);
+      setNodes(newNodes);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   const onAlertClose = () => {
@@ -180,6 +275,9 @@ const App = () => {
         setAlertMessage={setAlertMessage}
         setAlertType={setAlertType}
         userID={userID}
+        showForNodeAddition={showCommandBarForNodeAddition}
+        onCommandSelected={handleCommandSelected}
+        newNodeData={newNodeData}
       />
       <div className="absolute left-0 z-20 mt-5 ml-4">
         <Image src={Logo} alt="Vortexe Logo" className="w-10 h-10" />
