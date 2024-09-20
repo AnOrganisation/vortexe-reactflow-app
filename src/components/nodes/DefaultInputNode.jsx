@@ -71,7 +71,7 @@ const DefaultInputNode = ({ data }) => {
 
   return (
     <>
-      <div className="w-40 h-40 border rounded-lg bg-[#1F1F1F] nodrag">
+      <div className="w-40 h-40 border rounded-lg bg-[#1F1F1F]">
         <div className="flex flex-col items-center justify-center mt-10">
           <p className="text-white">
             {selectedSource === "API Ingestion"

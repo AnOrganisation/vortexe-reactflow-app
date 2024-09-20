@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Command from "./action/Command";
 
 import { Listbox, ListboxItem } from "@nextui-org/react";
@@ -30,18 +30,15 @@ const CommandBar = ({
 }) => {
   // State to store the filtered commands
   const [filteredCommands, setFilteredCommands] = useState(new Map([]));
-
   const [commands, setCommands] = useState(new Map([]));
-  // State to track which button is active, default is 'Commands'
-  const [activeButton, setActiveButton] = useState("Commands");
   // State to track the search query
   const [searchQuery, setSearchQuery] = useState("");
+  const commandBarRef = useRef(null);
 
   /**
    ** Fetch basic actions from the backend when the component mounts.
    *  Updates the commands state with the fetched basic actions.
    */
-
   const fetchBasicActions = useCallback(async () => {
     try {
       const response = await axios.get(
@@ -174,7 +171,7 @@ const CommandBar = ({
   const commandBarStyle = {
     position: "absolute",
     zIndex: 20,
-    width: "200px", // Adjust as needed
+    width: "192px", // Adjust as needed
     maxHeight: "screen", // Adjust as needed
     backgroundColor: "#1F1F1F",
     borderRadius: "8px",
@@ -182,11 +179,12 @@ const CommandBar = ({
     cursor: "pointer",
     left: isNodeAdditionMode ? `${newNodeData.screenPosition.x}px` : "5px",
     top: isNodeAdditionMode ? `${newNodeData.screenPosition.y}px` : "28px",
-    display: "block",
+    display: "flex",
   };
 
   return (
     <div
+      ref={commandBarRef}
       style={commandBarStyle}
       className="absolute z-20 w-48 max-h-screen text-white rounded-lg shadow-lg cursor-pointer bg-[#1F1F1F] left-5 top-28 flex flex-col items-center border border-[#6366F1]"
     >

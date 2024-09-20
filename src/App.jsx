@@ -70,7 +70,7 @@ const App = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [connection, setConnection] = useState(null);
 
-  // New state variables
+  // State variables for command bar
   const [showCommandBarForNodeAddition, setShowCommandBarForNodeAddition] =
     useState(false);
   const [newNodeData, setNewNodeData] = useState(null);
@@ -131,7 +131,7 @@ const App = () => {
       type: "ActionNode", // or use commandData to determine the type
       id: newNodeId,
       position: newNodeData.position,
-      data: { label: `${commandData.commandName}` },
+      data: { label: `${commandData.commandName}`, commandData },
       origin: [0.5, 0.0],
     };
 
@@ -265,20 +265,22 @@ const App = () => {
       <div className="relative flex flex-row items-center justify-center w-full">
         <Navbar onUpload={onUpload} setUserID={setUserID} />
       </div>
-      <CommandBar
-        activeFileContent={activeFileContent}
-        activeNodeID={activeNodeID}
-        fileNodes={nodes}
-        setFileNodes={setNodes}
-        setFileEdges={setEdges}
-        setAlert={setAlert}
-        setAlertMessage={setAlertMessage}
-        setAlertType={setAlertType}
-        userID={userID}
-        showForNodeAddition={showCommandBarForNodeAddition}
-        onCommandSelected={handleCommandSelected}
-        newNodeData={newNodeData}
-      />
+      {showCommandBarForNodeAddition && (
+        <CommandBar
+          activeFileContent={activeFileContent}
+          activeNodeID={activeNodeID}
+          fileNodes={nodes}
+          setFileNodes={setNodes}
+          setFileEdges={setEdges}
+          setAlert={setAlert}
+          setAlertMessage={setAlertMessage}
+          setAlertType={setAlertType}
+          userID={userID}
+          showForNodeAddition={showCommandBarForNodeAddition}
+          onCommandSelected={handleCommandSelected}
+          newNodeData={newNodeData}
+        />
+      )}
       <div className="absolute left-0 z-20 mt-5 ml-4">
         <Image src={Logo} alt="Vortexe Logo" className="w-10 h-10" />
       </div>
