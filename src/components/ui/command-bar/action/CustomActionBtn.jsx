@@ -624,6 +624,7 @@ const CustomActionBtn = ({ userID, onSave }) => {
                             className={
                               item.key === "delete" ? "text-danger" : ""
                             }
+                            textValue={item.label.toLowerCase()}
                           >
                             {item.label}
                           </DropdownItem>
@@ -657,6 +658,7 @@ const CustomActionBtn = ({ userID, onSave }) => {
                             className={
                               item.key === "delete" ? "text-danger" : ""
                             }
+                            textValue={item.label.toLowerCase()}
                           >
                             {item.label}
                           </DropdownItem>

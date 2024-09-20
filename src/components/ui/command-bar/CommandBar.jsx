@@ -191,6 +191,7 @@ const CommandBar = ({
                     key={index}
                     showDivider
                     description={description}
+                    textValue="actions"
                   >
                     <Command
                       key={index}

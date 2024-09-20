@@ -134,7 +134,12 @@ const App = () => {
 
   // Custom keydown handler to prevent backspace from deleting nodes
   const handleKeyDown = (event) => {
-    if (event.key === "Backspace") {
+    const targetTagName = event.target.tagName.toLowerCase();
+    if (
+      event.key === "Backspace" &&
+      targetTagName !== "input" &&
+      targetTagName !== "textarea"
+    ) {
       event.stopPropagation();
       event.preventDefault();
     }
@@ -263,9 +268,9 @@ const App = () => {
           onAlertClose={onAlertClose}
         ></Alert>
       )}
-      <div className="absolute z-30 top-80 right-40">
-        {/* <DefaultInputNode /> */}
-      </div>
+      {/* <div className="absolute z-30 top-80 right-40">
+        <DefaultInputNode /> 
+      </div> */}
       <ReactFlow
         nodeTypes={nodeTypes}
         edgeTypes={{ custom: WorkflowEdge }}
@@ -274,10 +279,10 @@ const App = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        // onConnectEnd={onConnectEnd}
         onKeyDown={handleKeyDown}
         onNodeClick={onNodeClick}
         nodesDraggable={true}
-        edgesDraggable={true}
         panOnScroll={false}
         snapToGrid={true}
         defaultEdgeOptions={defaultEdgeOptions}

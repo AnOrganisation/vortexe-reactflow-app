@@ -11,8 +11,8 @@ const InputSource = ({ source, selectedSource, setSelectedSource }) => {
         }}
         className={`flex items-center justify-start- p-3 rounded-lg mb-3 w-1/2 cursor-pointer hover:transition-all ${
           selectedSource === source.name
-            ? "bg-[#8383834D]"
-            : "bg-[#8f8e8e] hover:bg-[#8f8e8e]"
+            ? "bg-[#8f8e8e]"
+            : "bg-[#8383834D] hover:bg-[#8f8e8e]"
         }`}
       >
         {typeof source.logo === "string" ? (

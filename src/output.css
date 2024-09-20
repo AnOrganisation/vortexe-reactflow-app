@@ -818,8 +818,8 @@ video {
   right: 0.75rem;
 }
 
-.right-32 {
-  right: 8rem;
+.right-40 {
+  right: 10rem;
 }
 
 .right-5 {
@@ -880,10 +880,6 @@ video {
 
 .top-\[var\(--navbar-height\)\] {
   top: var(--navbar-height);
-}
-
-.right-40 {
-  right: 10rem;
 }
 
 .isolate {
@@ -1128,10 +1124,6 @@ video {
   margin-left: 0.75rem;
 }
 
-.ml-32 {
-  margin-left: 8rem;
-}
-
 .ml-4 {
   margin-left: 1rem;
 }
@@ -1188,6 +1180,10 @@ video {
   margin-top: 1.25rem;
 }
 
+.mt-8 {
+  margin-top: 2rem;
+}
+
 .mt-\[calc\(theme\(fontSize\.small\)_\+_10px\)\] {
   margin-top: calc(var(--nextui-font-size-small) + 10px);
 }
@@ -1198,10 +1194,6 @@ video {
 
 .mt-\[calc\(theme\(fontSize\.small\)_\+_8px\)\] {
   margin-top: calc(var(--nextui-font-size-small) + 8px);
-}
-
-.mt-8 {
-  margin-top: 2rem;
 }
 
 .box-border {
@@ -1467,10 +1459,6 @@ video {
   height: 500px;
 }
 
-.h-\[600px\] {
-  height: 600px;
-}
-
 .h-\[900px\] {
   height: 900px;
 }
@@ -1510,10 +1498,6 @@ video {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-\[58px\] {
-  height: 58px;
 }
 
 .max-h-64 {
@@ -1686,10 +1670,6 @@ video {
 
 .w-9 {
   width: 2.25rem;
-}
-
-.w-96 {
-  width: 24rem;
 }
 
 .w-\[100\%\] {
@@ -3752,10 +3732,6 @@ video {
   background-color: rgb(99 102 241 / var(--tw-bg-opacity));
 }
 
-.bg-\[\#706d6d6f\] {
-  background-color: #706d6d6f;
-}
-
 .bg-\[\#757575\] {
   --tw-bg-opacity: 1;
   background-color: rgb(117 117 117 / var(--tw-bg-opacity));
@@ -3763,6 +3739,11 @@ video {
 
 .bg-\[\#8383834D\] {
   background-color: #8383834D;
+}
+
+.bg-\[\#8f8e8e\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(143 142 142 / var(--tw-bg-opacity));
 }
 
 .bg-\[\#FF0000\] {
@@ -3894,6 +3875,10 @@ video {
 .bg-green-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(34 197 94 / var(--tw-bg-opacity));
+}
+
+.bg-inherit {
+  background-color: inherit;
 }
 
 .bg-overlay\/30 {
@@ -9358,10 +9343,6 @@ video {
   --tw-scale-x: 1.25;
   --tw-scale-y: 1.25;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.hover\:border-0:hover {
-  border-width: 0px;
 }
 
 .hover\:border-none:hover {
