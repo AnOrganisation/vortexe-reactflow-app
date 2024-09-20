@@ -9,7 +9,7 @@ import {
   Button,
   useDisclosure,
 } from "@nextui-org/react";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position } from "reactflow";
 import SalesforceLogo from "../../assets/salesforcelogo.png";
 import ApplicationIcon from "../ui/ApplicationIcon";
 import FileIcon from "../ui/command-bar/action/FileIcon";

@@ -15,7 +15,7 @@ import {
   getIncomers,
   getOutgoers,
   getConnectedEdges,
-} from "@xyflow/react";
+} from "reactflow";
 import React, { useState, useEffect, useCallback } from "react";
 import Flow from "../../../nodes/Flow";
 import Command from "../action/Command";

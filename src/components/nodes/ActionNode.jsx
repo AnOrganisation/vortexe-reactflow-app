@@ -1,6 +1,6 @@
 import React from "react";
 import { useRef } from "react";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position } from "reactflow";
 import { Button, useDisclosure } from "@nextui-org/react";
 function ActionNode({ id, data }) {
   // Reference to the node's DOM element
