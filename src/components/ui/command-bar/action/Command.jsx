@@ -27,7 +27,7 @@ const Command = ({
 }) => {
   const runCommand = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:8001/custom", {
+      const response = await axios.post("http://20.64.147.215:8001/custom", {
         content: activeFileContent,
         summary_length: 0,
         prompt: prompt,

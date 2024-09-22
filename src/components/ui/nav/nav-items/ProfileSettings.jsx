@@ -18,12 +18,8 @@ import {
 import React, { useState, useEffect } from "react";
 import "../../../../style.css";
 import axios from "axios";
-import { useAuth0 } from "@auth0/auth0-react";
 
 const ProfileSettings = ({ setUserID }) => {
-  const { logout } = useAuth0();
-  const { user, isAuthenticated, isLoading } = useAuth0();
-
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isProfileActive, setIsProfileActive] = useState(true);
   const [isSubscriptionsActive, setIsSubscriptionsActive] = useState(false);
@@ -44,37 +40,34 @@ const ProfileSettings = ({ setUserID }) => {
   };
 
   useEffect(() => {
-    // Define an async function inside the useEffect
     const registerUser = async () => {
-      if (isAuthenticated) {
-        setUserID(user.sub.slice(user.sub.indexOf("|") + 1));
-        const user_data = {
-          user_id: user.sub.slice(user.sub.indexOf("|") + 1),
-          first_name: user.given_name,
-          last_name: user.family_name,
-          email: user.email,
-          phone_number: "none",
-          access_type: "user",
-          status: "user",
-        };
-        try {
-          const response = await axios.post(
-            "http://127.0.0.1:8002/register_user",
-            user_data,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          console.log("User registered successfully: ", response.data);
-        } catch (error) {
-          console.error("Error:", error);
-        }
+      setUserID("123456");
+      const user_data = {
+        user_id: "123456",
+        first_name: "Random",
+        last_name: "User",
+        email: "someone@example.com",
+        phone_number: "none",
+        access_type: "user",
+        status: "user",
+      };
+      try {
+        const response = await axios.post(
+          "http://20.64.147.215:8002/register_user",
+          user_data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("User registered successfully: ", response.data);
+      } catch (error) {
+        console.error("Error:", error);
       }
     };
     registerUser();
-  }, [isAuthenticated]);
+  }, []);
 
   return (
     <>
@@ -86,11 +79,7 @@ const ProfileSettings = ({ setUserID }) => {
             className="w-[29px] h-[29px] focus:outline-none bg-transparent rounded-full border-0"
           >
             <Image
-              src={
-                isAuthenticated
-                  ? user.picture
-                  : "https://i.pravatar.cc/150?u=a04258a2462d826712d"
-              }
+              src={"https://i.pravatar.cc/150?u=a04258a2462d826712d"}
               className="w-[29px] h-[29px] border-2 rounded-full border-white"
             />
           </Button>
@@ -145,7 +134,10 @@ const ProfileSettings = ({ setUserID }) => {
           <DropdownItem
             onClick={() =>
               logout({
-                logoutParams: { returnTo: "http://localhost:5173/" },
+                logoutParams: {
+                  returnTo:
+                    "https://vortexe-front-bqdthuf4deg3fkea.eastus-01.azurewebsites.net/",
+                },
               })
             }
             key="delete"
@@ -220,11 +212,7 @@ const ProfileSettings = ({ setUserID }) => {
                     >
                       <Avatar
                         isBordered
-                        src={
-                          isAuthenticated
-                            ? user.picture
-                            : "https://i.pravatar.cc/150?u=a04258114e29026708c"
-                        }
+                        src={"https://i.pravatar.cc/150?u=a04258114e29026708c"}
                         className="w-20 h-20 ml-52 text-large"
                       />
                     </Badge>
@@ -239,7 +227,7 @@ const ProfileSettings = ({ setUserID }) => {
                           type="text"
                           placeholder="Type Here"
                           readOnly
-                          value={isAuthenticated ? user.nickname : "noload"}
+                          value="noload"
                         ></input>
                       </div>
                       <Divider className="bg-white" />
@@ -251,7 +239,7 @@ const ProfileSettings = ({ setUserID }) => {
                           type="text"
                           placeholder="Type Here"
                           readOnly
-                          value={isAuthenticated ? user.name : "noload"}
+                          value="noload"
                         ></input>
                       </div>
                       <Divider className="bg-white" />

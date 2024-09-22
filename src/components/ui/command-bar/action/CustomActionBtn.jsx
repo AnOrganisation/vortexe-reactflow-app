@@ -150,7 +150,7 @@ const CustomActionBtn = ({ userID, onSave }) => {
   const onUpload = async (formData) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/upload",
+        "http://20.64.147.215:8000/upload",
         formData
       );
       console.log("File uploaded successfully:", response.data);

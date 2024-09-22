@@ -212,7 +212,7 @@ const App = () => {
     // Logic for handling file upload
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/upload",
+        "http://20.64.147.215:8000/upload",
         formData,
         {
           headers: {
@@ -256,7 +256,7 @@ const App = () => {
     // Logic for handling workflow save to the workflow service
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8003/v1/workflows/save",
+        "http://20.64.147.215:8003/v1/workflows/save",
         workflow
       );
       console.log("Workflow Save Success:", response.data);
@@ -271,7 +271,7 @@ const App = () => {
     // Logic for fetching workflows from the workflow service
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8003/v1/workflows/list?user_id=${userID}`
+        `http://20.64.147.215:8003/v1/workflows/list?user_id=${userID}`
       );
       console.log("Workflows Fetch Success:", response.data);
     } catch (error) {
@@ -393,8 +393,8 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/app" element={appContent} />
+      {/* <Route path="/" element={<Home />} /> */}
+      <Route path="/" element={appContent} />
     </Routes>
   );
 };
