@@ -5,6 +5,7 @@ import {
   ReactFlow,
   useNodesState,
   useEdgesState,
+  useReactFlow,
   addEdge,
   MiniMap,
   Background,
@@ -79,6 +80,9 @@ const App = () => {
     useState(false);
   const [newNodeData, setNewNodeData] = useState(null);
 
+  //State variables for workflow
+  const [workflow, setWorkflow] = useState([]);
+
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
@@ -97,7 +101,7 @@ const App = () => {
       const targetIsPane = event.target.classList.contains("react-flow__pane");
 
       if (targetIsPane && reactFlowInstance && connection) {
-        const flowPosition = reactFlowInstance.project({
+        const flowPosition = reactFlowInstance.screenToFlowPosition({
           x: event.clientX,
           y: event.clientY,
         });
@@ -136,7 +140,10 @@ const App = () => {
       type: "ActionNode", // or use commandData to determine the type
       id: newNodeId,
       position: newNodeData.position,
-      data: { label: `${commandData.actionName}`, commandData },
+      data: {
+        label: `${commandData.actionName}`,
+        actionID: commandData.actionID,
+      },
       origin: [0.5, 0.0],
     };
 

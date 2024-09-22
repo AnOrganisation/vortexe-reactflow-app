@@ -238,7 +238,7 @@ const ProfileSettings = ({ setUserID }) => {
                           className="w-40 rounded-md border border-white bg-[#1f1f1f]"
                           type="text"
                           placeholder="Type Here"
-                          readOnly="true"
+                          readOnly
                           value={isAuthenticated ? user.nickname : "noload"}
                         ></input>
                       </div>
@@ -250,7 +250,7 @@ const ProfileSettings = ({ setUserID }) => {
                           className="w-40 rounded-md border border-white bg-[#1f1f1f]"
                           type="text"
                           placeholder="Type Here"
-                          readOnly="true"
+                          readOnly
                           value={isAuthenticated ? user.name : "noload"}
                         ></input>
                       </div>
