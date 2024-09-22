@@ -1,5 +1,5 @@
 // App.jsx
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useMemo } from "react";
 import { Image, Button } from "@nextui-org/react";
 import {
   ReactFlow,
@@ -34,6 +34,10 @@ const nodeTypes = {
   FileNode,
   OutputNode,
   DefaultInputNode,
+};
+
+const edgeTypes = {
+  custom: WorkflowEdge,
 };
 
 const App = () => {
@@ -124,6 +128,7 @@ const App = () => {
 
   // Function to handle command selection from the command bar
   const handleCommandSelected = (commandData) => {
+    console.log("Command Data in App.jsx:", commandData);
     // Use the stored newNodeData and the commandData to add the node
     const newNodeId = getId();
 
@@ -131,7 +136,7 @@ const App = () => {
       type: "ActionNode", // or use commandData to determine the type
       id: newNodeId,
       position: newNodeData.position,
-      data: { label: `${commandData.commandName}`, commandData },
+      data: { label: `${commandData.actionName}`, commandData },
       origin: [0.5, 0.0],
     };
 
@@ -298,7 +303,7 @@ const App = () => {
       )}
       <ReactFlow
         nodeTypes={nodeTypes}
-        edgeTypes={{ custom: WorkflowEdge }}
+        edgeTypes={edgeTypes}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
@@ -311,6 +316,8 @@ const App = () => {
         nodesDraggable={true}
         panOnScroll={false}
         snapToGrid={true}
+        zoomOnScroll={false}
+        zoomOnDoubleClick={false}
         defaultEdgeOptions={defaultEdgeOptions}
         fitView
         nodeOrigin={nodeOrigin}

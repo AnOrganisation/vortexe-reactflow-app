@@ -49,7 +49,7 @@ const CommandBar = ({
           },
         }
       );
-      console.log("Basic actions fetched successfully: ", response.data);
+      // console.log("Basic actions fetched successfully: ", response.data);
       return response.data;
     } catch (error) {
       console.error("Basic actions fetch failed:", error);
@@ -92,6 +92,8 @@ const CommandBar = ({
             newCommands.set(action.action_id, {
               name: action.action_name,
               description: action.description,
+              action_id: action.action_id,
+              prompt: action.prompt,
             });
           });
           return newCommands;
@@ -105,6 +107,8 @@ const CommandBar = ({
             newCommands.set(action.action_id, {
               name: action.action_name,
               description: action.description,
+              action_id: action.action_id,
+              prompt: action.prompt,
             });
           });
           return newCommands;
@@ -161,6 +165,7 @@ const CommandBar = ({
             description.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
+      // console.log("Filtered commands: ", Array.from(filtered));
       setFilteredCommands(filtered); // set filtered commands
     }
   }, [searchQuery, commands]);
@@ -178,7 +183,9 @@ const CommandBar = ({
     border: "1px solid #6366F1",
     cursor: "pointer",
     left: isNodeAdditionMode ? `${newNodeData.screenPosition.x}px` : "5px",
-    top: isNodeAdditionMode ? `${newNodeData.screenPosition.y}px` : "28px",
+    top: isNodeAdditionMode
+      ? `${newNodeData.screenPosition.y - 150}px`
+      : "28px",
     display: "flex",
   };
 
@@ -206,7 +213,20 @@ const CommandBar = ({
               className="overflow-y-auto border-0 max-h-96 custom-scrollbar"
             >
               {Array.from(filteredCommands).map(
-                ([key, { name, description }], index) => (
+                (
+                  [
+                    key,
+                    {
+                      name,
+                      description,
+                      action_id,
+                      prompt,
+                      action_type,
+                      model_configuration,
+                    },
+                  ],
+                  index
+                ) => (
                   <ListboxItem
                     key={index}
                     showDivider
@@ -215,9 +235,12 @@ const CommandBar = ({
                   >
                     <Command
                       key={index}
-                      commandName={name}
-                      prompt={commands.get(key).prompt}
-                      commandID={`commandBar-` + uuidv4()}
+                      actionID={action_id}
+                      actionName={name}
+                      prompt={prompt}
+                      actionType={action_type}
+                      description={description}
+                      modelConfiguration={model_configuration}
                       activeFileContent={activeFileContent}
                       activeNodeID={activeNodeID}
                       fileNodes={fileNodes}

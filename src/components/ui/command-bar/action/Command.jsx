@@ -3,14 +3,17 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
 const Command = ({
-  commandName,
+  actionID,
+  actionName,
   prompt,
+  actionType,
+  description,
+  modelConfiguration,
   isActivatedFromCustomWorkflowModal,
   nodes,
   setNodes,
   setEdges,
   onNodesDelete,
-  commandID,
   activeFileContent,
   activeNodeID,
   fileNodes,
@@ -39,7 +42,7 @@ const Command = ({
   // const handlePress = async () => {
   //   if (isActivatedFromCustomWorkflowModal) {
   //     console.log(
-  //       `Adding command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
+  //       `Adding command: ${actionName} with uid: ${actionID} with prompt: ${prompt}`
   //     );
 
   //     // Find the last node of the same type
@@ -55,7 +58,7 @@ const Command = ({
   //       id: uuidv4(), // Generate a unique id
   //       type: "ActionNode", // Type of node
   //       data: {
-  //         label: `${commandName}`,
+  //         label: `${actionName}`,
   //         //value: prompt,
   //         onNodesDelete: onNodesDelete,
   //       },
@@ -92,7 +95,7 @@ const Command = ({
   //       setAlert(true);
   //     } else {
   //       console.log(
-  //         `Executing command: ${commandName} with uid: ${commandID} with prompt: ${prompt}`
+  //         `Executing command: ${actionName} with uid: ${actionID} with prompt: ${prompt}`
   //       );
   //       const result = await runCommand();
   //       const newOutputNode = {
@@ -100,7 +103,7 @@ const Command = ({
   //         type: "OutputNode",
   //         data: {
   //           value: result.summary,
-  //           label: commandName,
+  //           label: actionName,
   //           source: "command",
   //         },
   //         position: {
@@ -122,18 +125,23 @@ const Command = ({
     if (onCommandSelected) {
       // Node addition mode
       const commandData = {
-        commandName,
+        actionID,
+        actionName,
         prompt,
-        commandID,
-        // Include any other data you need
+        actionType,
+        description,
+        modelConfiguration,
       };
+      // console.log(
+      //   `Selected command: ${actionName} with id: ${actionID} prompt: ${prompt.instruction} Sending to parent component...  `
+      // );
       onCommandSelected(commandData);
     }
   };
 
   return (
     <div onClick={handlePress}>
-      <p>{commandName}</p>
+      <p>{actionName}</p>
     </div>
   );
 };
