@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
 const Command = ({
+  userID,
   actionID,
   actionName,
   prompt,
@@ -125,16 +126,17 @@ const Command = ({
     if (onCommandSelected) {
       // Node addition mode
       const commandData = {
-        actionID,
-        actionName,
+        user_id: userID,
+        action_id: actionID,
+        action_name: actionName,
         prompt,
-        actionType,
+        action_type: actionType,
         description,
-        modelConfiguration,
+        model_configuration: modelConfiguration,
       };
-      // console.log(
-      //   `Selected command: ${actionName} with id: ${actionID} prompt: ${prompt.instruction} Sending to parent component...  `
-      // );
+      console.log(
+        `Selected command: ${actionName} with id: ${actionID} prompt: ${prompt.instruction} actionType: ${actionType} description: ${description} modelConfiguration: ${modelConfiguration} Sending to parent component...  `
+      );
       onCommandSelected(commandData);
     }
   };

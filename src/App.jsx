@@ -5,7 +5,6 @@ import {
   ReactFlow,
   useNodesState,
   useEdgesState,
-  useReactFlow,
   addEdge,
   MiniMap,
   Background,
@@ -81,7 +80,8 @@ const App = () => {
   const [newNodeData, setNewNodeData] = useState(null);
 
   //State variables for workflow
-  const [workflow, setWorkflow] = useState([]);
+  const [workflowActions, setWorkflowActions] = useState([]);
+  const [workflows, setWorkflows] = useState([]);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -133,6 +133,10 @@ const App = () => {
   // Function to handle command selection from the command bar
   const handleCommandSelected = (commandData) => {
     console.log("Command Data in App.jsx:", commandData);
+    console.log("Workflow Actions:", workflowActions);
+    //Store commandData to be sent to the workflow service for saving
+    setWorkflowActions((wfs) => [...wfs, commandData]);
+
     // Use the stored newNodeData and the commandData to add the node
     const newNodeId = getId();
 
@@ -141,8 +145,8 @@ const App = () => {
       id: newNodeId,
       position: newNodeData.position,
       data: {
-        label: `${commandData.actionName}`,
-        actionID: commandData.actionID,
+        label: `${commandData.action_name}`,
+        actionID: commandData.action_id,
       },
       origin: [0.5, 0.0],
     };
@@ -248,6 +252,33 @@ const App = () => {
     }
   };
 
+  const handleWorkflowSave = async (workflow) => {
+    // Logic for handling workflow save to the workflow service
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8003/v1/workflows/save",
+        workflow
+      );
+      console.log("Workflow Save Success:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error:", error);
+      return null;
+    }
+  };
+
+  const getWorkflows = async () => {
+    // Logic for fetching workflows from the workflow service
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8003/v1/workflows/list?user_id=${userID}`
+      );
+      console.log("Workflows Fetch Success:", response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const onAlertClose = () => {
     setAlert(false);
   };
@@ -265,6 +296,21 @@ const App = () => {
     };
     newNodes.push(newNode);
     setNodes(newNodes);
+  };
+
+  const handleSave = async () => {
+    const currentWorkflow = {
+      user_id: userID,
+      workflow_name: "My Workflow",
+      workflow_id: null,
+      workflow_type: "custom",
+      actions: workflowActions,
+    };
+    const workflowSaveResponse = await handleWorkflowSave(currentWorkflow);
+    if (workflowSaveResponse != null)
+      currentWorkflow.workflow_id = workflowSaveResponse.new_workflow_id;
+    setWorkflows([...workflows, currentWorkflow]);
+    const listWorkflows = await getWorkflows();
   };
 
   const defaultEdgeOptions = {
@@ -333,6 +379,15 @@ const App = () => {
         <Background variant="dots" />
         <MiniMap nodeColor={nodeColor} nodeStrokeWidth={3} zoomable pannable />
       </ReactFlow>
+      <div className="absolute z-50 transform -translate-x-1/2 bottom-5 left-1/2">
+        <Button
+          size="lg"
+          className="rounded-full focus:outline-none bg-[#6366F1] text-white"
+          onPress={handleSave}
+        >
+          Save
+        </Button>
+      </div>
     </div>
   );
 

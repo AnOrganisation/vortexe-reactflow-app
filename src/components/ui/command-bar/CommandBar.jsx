@@ -90,10 +90,15 @@ const CommandBar = ({
           const newCommands = new Map(prevCommands);
           basicActions.forEach((action) => {
             newCommands.set(action.action_id, {
+              user_id: userID,
               name: action.action_name,
               description: action.description,
               action_id: action.action_id,
               prompt: action.prompt,
+              action_type: action.action_type,
+              model_configuration: {
+                model_configuration: "string",
+              },
             });
           });
           return newCommands;
@@ -105,10 +110,15 @@ const CommandBar = ({
           const newCommands = new Map(prevCommands);
           customActions.forEach((action) => {
             newCommands.set(action.action_id, {
+              user_id: userID,
               name: action.action_name,
               description: action.description,
               action_id: action.action_id,
               prompt: action.prompt,
+              action_type: action.action_type,
+              model_configuration: {
+                model_configuration: "string",
+              },
             });
           });
           return newCommands;
@@ -171,6 +181,7 @@ const CommandBar = ({
   }, [searchQuery, commands]);
 
   const isNodeAdditionMode = showForNodeAddition && newNodeData;
+  // console.log("Filetered commands: ", Array.from(filteredCommands));
 
   // Adjust the style based on newNodeData.screenPosition
   const commandBarStyle = {
@@ -217,6 +228,7 @@ const CommandBar = ({
                   [
                     key,
                     {
+                      user_id,
                       name,
                       description,
                       action_id,
@@ -235,6 +247,7 @@ const CommandBar = ({
                   >
                     <Command
                       key={index}
+                      userID={user_id}
                       actionID={action_id}
                       actionName={name}
                       prompt={prompt}
