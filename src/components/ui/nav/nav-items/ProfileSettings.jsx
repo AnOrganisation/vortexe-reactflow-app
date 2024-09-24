@@ -145,7 +145,7 @@ const ProfileSettings = ({ setUserID }) => {
           <DropdownItem
             onClick={() =>
               logout({
-                logoutParams: { returnTo: "http://localhost:5173/" },
+                logoutParams: { returnTo: `${window.location.origin}` },
               })
             }
             key="delete"
