@@ -32,7 +32,7 @@ const IngestionAPISetupModal = ({
 
     try {
       const response = await axios.post(
-        "http://20.64.147.215:8003/api_node/execute",
+        "https://api.vortexeai.com/workflow/api_node/execute",
         client_schema,
         {
           headers: {
@@ -82,7 +82,7 @@ const IngestionAPISetupModal = ({
 
                 <p className="p-2 mx-2 mt-3 text-2xl">Endpoint</p>
                 <div className="flex flex-row items-center justify-between w-full p-3 border-2 rounded-lg">
-                  <p>http://20.64.147.215:8003/api_node/execute</p>
+                  <p>https://api.vortexeai.com/workflow/api_node/execute</p>
                   <div className="cursor-pointer">
                     <CopyIcon className="w-8 h-8 text-white cursor-pointer" />
                   </div>

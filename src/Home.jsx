@@ -1,10 +1,14 @@
 import React from "react";
 import Logo from "./assets/VortexeLogo.png";
 import { Button } from "@nextui-org/react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Home = () => {
+  const { loginWithRedirect } = useAuth0();
+
   const handlePressLogin = () => {
     console.log("Login initiated");
+    loginWithRedirect();
   };
 
   return (
