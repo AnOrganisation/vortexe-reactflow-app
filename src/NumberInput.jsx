@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Handle, Position, useReactFlow } from "@xyflow/react";
+import { Handle, Position, useReactFlow } from "reactflow";
 
 /**
  * NumberInput is a React component that renders a number input field with a label.

@@ -1,6 +1,6 @@
 // CustomEdge.jsx
 import React from "react";
-import { BaseEdge, EdgeLabelRenderer, getBezierPath } from "@xyflow/react";
+import { BaseEdge, EdgeLabelRenderer, getBezierPath } from "reactflow";
 import WorkflowOutputLabel from "./WorkflowOutputLabel";
 
 export default function WorkflowEdge({

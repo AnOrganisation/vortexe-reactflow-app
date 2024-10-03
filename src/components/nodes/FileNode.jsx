@@ -9,7 +9,7 @@ import {
   Tooltip,
   Badge,
 } from "@nextui-org/react";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position } from "reactflow";
 import { useState } from "react";
 import PDFIcon from "../../assets/pdf.png";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";

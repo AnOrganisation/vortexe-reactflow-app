@@ -12,7 +12,6 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
     "@nextui-org/react": "^2.4.6",
-    "@xyflow/react": "^12.0.1",
     "axios": "^1.7.3",
     "framer-motion": "^11.3.12",
     "pdf-lib": "^1.17.1",
@@ -21,6 +20,7 @@
     "react-dom": "^18.3.1",
     "react-pdf": "^9.1.0",
     "react-router-dom": "^6.26.0",
+    "reactflow": "^11.11.4",
     "tailwind-scrollbar": "^3.1.0",
     "uuid": "^10.0.0"
   },

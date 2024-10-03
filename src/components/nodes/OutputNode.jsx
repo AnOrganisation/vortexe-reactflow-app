@@ -11,7 +11,7 @@ import {
   Badge,
   Button,
 } from "@nextui-org/react";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position } from "reactflow";
 import { useState, useRef } from "react";
 import "../../style.css";
 

@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Command from "./action/Command";
-import Workflow from "./workflow/Workflow";
-import { Button } from "@nextui-org/react";
-import CustomWorkflowBtn from "./workflow/CustomWorkflowBtn";
+
+import { Listbox, ListboxItem } from "@nextui-org/react";
+import { ListboxWrapper } from "./action/ListboxWrapper";
+
 import CustomActionBtn from "./action/CustomActionBtn";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
 /**
  * CommandBar component renders a UI element that allows users to interact with a list of commands.
@@ -21,193 +23,252 @@ const CommandBar = ({
   setAlert,
   setAlertMessage,
   setAlertType,
+  userID,
+  showForNodeAddition,
+  onCommandSelected,
+  newNodeData,
 }) => {
-  const initialCommands = new Map([
-    ["Simplify", "Simplify the text"],
-    ["Summarize", "Summarize the content"],
-    ["Email", "Compose an email"],
-    ["Transcribe", "Transcribe the audio"],
-    ["Video", "Process the video"],
-    ["Analyze", "Analyze the data"],
-    ["Textify", "Convert to text"],
-    ["Itinerary", "Create an itinerary"],
-    ["Analytics", "Generate analytics"],
-    ["Customer Exp", "Improve customer experience"],
-    ["Vocalize", "Convert text to speech"],
-    ["FAQ", "Generate FAQs"],
-    ["Inspiration", "Provide inspiration"],
-    ["Grammar", "Check grammar"],
-    ["Randomize", "Randomize the order"],
-    ["Translate", "Translate the text"],
-    ["Fix Format", "Fix the format"],
-    ["Add Refs", "Add references"],
-  ]);
-
-  const initialWorkflows = new Map([
-    ["Workflow 1", ["Simplify", "Summarize"]],
-    ["Workflow 2", ["Task 1", "Task 2"]],
-    ["Workflow 3", ["Task 1", "Task 2"]],
-    ["Workflow 4", ["Task 1", "Task 2"]],
-    ["Workflow 5", ["Task 1", "Task 2"]],
-    ["Workflow 6", ["Task 1", "Task 2"]],
-    ["Workflow 7", ["Task 1", "Task 2"]],
-    ["Workflow 8", ["Task 1", "Task 2"]],
-    ["Workflow 9", ["Task 1", "Task 2"]],
-    ["Workflow 10", ["Task 1", "Task 2"]],
-    ["Workflow 11", ["Task 1", "Task 2"]],
-    ["Workflow 12", ["Task 1", "Task 2"]],
-    ["Workflow 13", ["Task 1", "Task 2"]],
-    ["Workflow 14", ["Task 1", "Task 2"]],
-    ["Workflow 15", ["Task 1", "Task 2"]],
-  ]);
-
-  const [workflows, setWorkflows] = useState(initialWorkflows);
   // State to store the filtered commands
-  const [commands, setCommands] = useState(initialCommands);
-  // State to track which button is active, default is 'Commands'
-  const [activeButton, setActiveButton] = useState("Commands");
+  const [filteredCommands, setFilteredCommands] = useState(new Map([]));
+  const [commands, setCommands] = useState(new Map([]));
   // State to track the search query
   const [searchQuery, setSearchQuery] = useState("");
-
-  // State to track the custom actions
-  const [customActions, setCustomActions] = useState(new Map());
-
-  // State to track the custom workflows
-  const [customWorkflows, setCustomWorkflows] = useState(new Map());
-
-  useEffect(() => {
-    if (customActions.size !== 0) {
-      setCommands((prevCommands) => {
-        const newCommands = new Map(prevCommands);
-        customActions.forEach((value, key) => {
-          newCommands.set(key, value);
-        });
-        return newCommands;
-      });
-    }
-  }, [customActions]);
-
-  useEffect(() => {
-    if (customWorkflows.size !== 0) {
-      setWorkflows((prevWorkflows) => {
-        const newWorkflows = new Map(prevWorkflows);
-        customWorkflows.forEach((value, key) => {
-          newWorkflows.set(key, value);
-        });
-        return newWorkflows;
-      });
-    }
-  }, [customWorkflows]);
-
-  useEffect(() => {
-    // Filter commands based on the search query
-    if (searchQuery === "") {
-      if (activeButton === "Commands") {
-        setCommands(new Map([...initialCommands, ...customActions]));
-      } else {
-        setWorkflows(new Map([...initialWorkflows, ...customWorkflows]));
-      }
-    } else {
-      if (activeButton === "Commands") {
-        const filteredCommands = new Map(
-          [...initialCommands, ...customActions].filter(([key, value]) =>
-            key.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        );
-        setCommands(filteredCommands);
-      } else {
-        const filteredWorkflows = new Map(
-          [...initialWorkflows, ...customWorkflows].filter(([key, value]) =>
-            key.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        );
-        setWorkflows(filteredWorkflows);
-      }
-    }
-  }, [searchQuery, activeButton, customActions, customWorkflows]);
+  const commandBarRef = useRef(null);
 
   /**
-   * Handles button clicks to set the active button state.
-   *
-   * @param {string} buttonName - The name of the button that was clicked.
+   ** Fetch basic actions from the backend when the component mounts.
+   *  Updates the commands state with the fetched basic actions.
    */
-  const handleClick = (buttonName) => {
-    setActiveButton(buttonName);
+  const fetchBasicActions = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        "https://api.vortexeai.com/workflow/v1/get_basic_actions",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // console.log("Basic actions fetched successfully: ", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Basic actions fetch failed:", error);
+    }
+  }, []);
+
+  /**
+   * * Get custom actions from the backend and update the commands state
+   */
+  const getCustomActions = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `https://api.vortexeai.com/workflow/v1/action/list?user_id=${userID}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // console.log("Custom actions fetched successfully: ", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Custom actions fetch failed:", error);
+      return [];
+    }
+  }, [userID]);
+  //************************************************************************** */
+
+  const fetchAndSetActions = async () => {
+    try {
+      const [basicActions, customActions] = await Promise.all([
+        fetchBasicActions(),
+        getCustomActions(),
+      ]);
+
+      if (basicActions) {
+        setCommands((prevCommands) => {
+          const newCommands = new Map(prevCommands);
+          basicActions.forEach((action) => {
+            newCommands.set(action.action_id, {
+              user_id: userID,
+              name: action.action_name,
+              description: action.description,
+              action_id: action.action_id,
+              prompt: action.prompt,
+              action_type: action.action_type,
+              model_configuration: {
+                model_configuration: "string",
+              },
+            });
+          });
+          return newCommands;
+        });
+      }
+
+      if (customActions && customActions.length > 0) {
+        setCommands((prevCommands) => {
+          const newCommands = new Map(prevCommands);
+          customActions.forEach((action) => {
+            newCommands.set(action.action_id, {
+              user_id: userID,
+              name: action.action_name,
+              description: action.description,
+              action_id: action.action_id,
+              prompt: action.prompt,
+              action_type: action.action_type,
+              model_configuration: {
+                model_configuration: "string",
+              },
+            });
+          });
+          return newCommands;
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch actions:", error);
+    }
+  };
+
+  /**
+   * * Save custom actions to the backend when the custom action component unmounts.
+   *  Updates the commands state with the saved custom actions.
+   */
+  const saveCustomActions = useCallback(
+    async (customAction) => {
+      if (customAction) {
+        try {
+          const response = await axios.post(
+            `https://api.vortexeai.com/workflow/v1/action/save`,
+            customAction,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log("Custom action saved successfully: ", response.data);
+        } catch (error) {
+          console.error("Custom actions save failed:", error);
+        }
+        fetchAndSetActions();
+      }
+    },
+    [getCustomActions, userID]
+  );
+  //************************************************************************** */
+
+  useEffect(() => {
+    fetchAndSetActions();
+  }, [fetchBasicActions, getCustomActions, userID]);
+
+  //************************************************************************** */
+
+  // Filter logic that won't modify the original `commands` state
+  useEffect(() => {
+    if (searchQuery === "") {
+      setFilteredCommands(commands); // reset to all commands if query is empty
+    } else {
+      const filtered = new Map(
+        Array.from(commands).filter(
+          ([key, { name, description }]) =>
+            name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            description.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+      // console.log("Filtered commands: ", Array.from(filtered));
+      setFilteredCommands(filtered); // set filtered commands
+    }
+  }, [searchQuery, commands]);
+
+  const isNodeAdditionMode = showForNodeAddition && newNodeData;
+  // console.log("Filetered commands: ", Array.from(filteredCommands));
+
+  // Adjust the style based on newNodeData.screenPosition
+  const commandBarStyle = {
+    position: "absolute",
+    zIndex: 20,
+    width: "192px", // Adjust as needed
+    maxHeight: "screen", // Adjust as needed
+    backgroundColor: "#1F1F1F",
+    borderRadius: "8px",
+    border: "1px solid #6366F1",
+    cursor: "pointer",
+    left: isNodeAdditionMode ? `${newNodeData.screenPosition.x}px` : "5px",
+    top: isNodeAdditionMode
+      ? `${newNodeData.screenPosition.y - 150}px`
+      : "28px",
+    display: "flex",
   };
 
   return (
-    <div className="absolute z-20 w-48 max-h-screen text-white rounded-lg shadow-lg cursor-pointer bg-[#1F1F1F] left-5 top-28 flex flex-col items-center border border-[#6366F1]">
+    <div
+      ref={commandBarRef}
+      style={commandBarStyle}
+      className="absolute z-20 w-48 max-h-screen text-white rounded-lg shadow-lg cursor-pointer bg-[#1F1F1F] left-5 top-28 flex flex-col items-center border border-[#6366F1]"
+    >
       <input
         type="text"
-        className="w-[148px] h-[14px] p-2 mb-4 text-white border-none rounded-full outline-none mt-5 bg-[#6366F1] bg-opacity-40 text-xs"
-        placeholder={
-          activeButton === "Commands" ? "Search an action" : "Search a workflow"
-        }
+        className="w-[148px] h-[14px] p-3 mb-4 text-white border-none rounded-full outline-none mt-5 bg-[#3837376f] bg-opacity-40 text-xs"
+        placeholder="Search an action"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <div className="flex flex-row items-center w-full ml-6">
-        <Button
-          className={`mr-2 text-white focus:outline-none h-4 w-14 text-xxs text-center rounded-sm ${
-            activeButton === "Commands" ? "bg-[#6366F1]" : "bg-[#757575]"
-          }`}
-          onClick={() => handleClick("Commands")}
-        >
-          Actions
-        </Button>
-        <Button
-          className={`text-white focus:outline-none h-4 w-14 text-xxs text-center rounded-sm ${
-            activeButton === "Workflows" ? "bg-[#6366F1]" : "bg-[#757575]"
-          }`}
-          onClick={() => handleClick("Workflows")}
-        >
-          Workflows
-        </Button>
-      </div>
-      <div className="border border-[#6366F1] rounded-lg w-[90%] mb-5 flex flex-col">
-        {activeButton === "Commands" ? (
-          <CustomActionBtn setCustomAction={setCustomActions} />
-        ) : (
-          <CustomWorkflowBtn
-            setCustomWorkflow={setCustomWorkflows}
-            commands={commands}
-          />
-        )}
-        <div className="mb-3 space-y-2 overflow-y-auto max-h-96 custom-scrollbar">
-          {activeButton === "Commands"
-            ? Array.from(commands).map(([key, value], index) => (
-                <Command
-                  key={index}
-                  commandName={key}
-                  prompt={value}
-                  commandID={`commandBar-` + uuidv4()}
-                  activeFileContent={activeFileContent}
-                  activeNodeID={activeNodeID}
-                  fileNodes={fileNodes}
-                  setFileNodes={setFileNodes}
-                  setFileEdges={setFileEdges}
-                  setAlert={setAlert}
-                  setAlertMessage={setAlertMessage}
-                  setAlertType={setAlertType}
-                />
-              ))
-            : Array.from(workflows).map(([key, value], index) => (
-                <Workflow
-                  key={index}
-                  workflowName={key}
-                  workflowID={uuidv4()}
-                  actionList={value}
-                  commands={commands}
-                  fileNodes={fileNodes}
-                  setFileNodes={setFileNodes}
-                  setFileEdges={setFileEdges}
-                  activeFileContent={activeFileContent}
-                  activeNodeID={activeNodeID}
-                  setAlert={setAlert}
-                  setAlertMessage={setAlertMessage}
-                  setAlertType={setAlertType}
-                />
-              ))}
+      <div className="w-[90%] mb-3 flex flex-col">
+        <CustomActionBtn userID={userID} onSave={saveCustomActions} />
+        <div className="mb-3 space-y-2 max-h-96">
+          <ListboxWrapper>
+            <Listbox
+              aria-label="Listbox Variants"
+              color="default"
+              variant="solid"
+              className="overflow-y-auto border-0 max-h-96 custom-scrollbar"
+            >
+              {Array.from(filteredCommands).map(
+                (
+                  [
+                    key,
+                    {
+                      user_id,
+                      name,
+                      description,
+                      action_id,
+                      prompt,
+                      action_type,
+                      model_configuration,
+                    },
+                  ],
+                  index
+                ) => (
+                  <ListboxItem
+                    key={index}
+                    showDivider
+                    description={description}
+                    textValue="actions"
+                  >
+                    <Command
+                      key={index}
+                      userID={user_id}
+                      actionID={action_id}
+                      actionName={name}
+                      prompt={prompt}
+                      actionType={action_type}
+                      description={description}
+                      modelConfiguration={model_configuration}
+                      activeFileContent={activeFileContent}
+                      activeNodeID={activeNodeID}
+                      fileNodes={fileNodes}
+                      setFileNodes={setFileNodes}
+                      setFileEdges={setFileEdges}
+                      setAlert={setAlert}
+                      setAlertMessage={setAlertMessage}
+                      setAlertType={setAlertType}
+                      onCommandSelected={onCommandSelected}
+                    />
+                  </ListboxItem>
+                )
+              )}
+            </Listbox>
+          </ListboxWrapper>
         </div>
       </div>
     </div>

@@ -15,13 +15,14 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../../../style.css";
+import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const ProfileSettings = () => {
-  // const { logout } = useAuth0();
-  // const { user, isAuthenticated, isLoading } = useAuth0();
+const ProfileSettings = ({ setUserID }) => {
+  const { logout } = useAuth0();
+  const { user, isAuthenticated, isLoading } = useAuth0();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isProfileActive, setIsProfileActive] = useState(true);
@@ -37,6 +38,43 @@ const ProfileSettings = () => {
     }
   };
 
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+    //TODO: Update username in database on save
+  };
+
+  useEffect(() => {
+    const registerUser = async () => {
+      if (isAuthenticated) {
+        setUserID(user.sub.slice(user.sub.indexOf("|") + 1));
+        const user_data = {
+          user_id: user.sub.slice(user.sub.indexOf("|") + 1),
+          first_name: user.given_name,
+          last_name: user.family_name,
+          email: user.email,
+          phone_number: "none",
+          access_type: "user",
+          status: "user",
+        };
+        try {
+          const response = await axios.post(
+            "https://api.vortexeai.com/user/register_user",
+            user_data,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log("User registered successfully: ", response.data);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+    };
+    registerUser();
+  }, [isAuthenticated]);
+
   return (
     <>
       <Dropdown className="bg-[#1f1f1f]">
@@ -47,7 +85,11 @@ const ProfileSettings = () => {
             className="w-[29px] h-[29px] focus:outline-none bg-transparent rounded-full border-0"
           >
             <Image
-              src={"https://i.pravatar.cc/150?u=a04258a2462d826712d"}
+              src={
+                isAuthenticated
+                  ? user.picture
+                  : "https://i.pravatar.cc/150?u=a04258a2462d826712d"
+              }
               className="w-[29px] h-[29px] border-2 rounded-full border-white"
             />
           </Button>
@@ -102,7 +144,9 @@ const ProfileSettings = () => {
           <DropdownItem
             onClick={() =>
               logout({
-                logoutParams: { returnTo: "http://localhost:5173/" },
+                logoutParams: {
+                  returnTo: `${window.location.origin}`,
+                },
               })
             }
             key="delete"
@@ -195,6 +239,8 @@ const ProfileSettings = () => {
                           className="w-40 rounded-md border border-white bg-[#1f1f1f]"
                           type="text"
                           placeholder="Type Here"
+                          readOnly
+                          value={isAuthenticated ? user.nickname : "noload"}
                         ></input>
                       </div>
                       <Divider className="bg-white" />
@@ -205,6 +251,8 @@ const ProfileSettings = () => {
                           className="w-40 rounded-md border border-white bg-[#1f1f1f]"
                           type="text"
                           placeholder="Type Here"
+                          readOnly
+                          value={isAuthenticated ? user.name : "noload"}
                         ></input>
                       </div>
                       <Divider className="bg-white" />
