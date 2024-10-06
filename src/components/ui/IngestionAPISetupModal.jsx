@@ -49,15 +49,15 @@ const IngestionAPISetupModal = ({
 
   return (
     <Modal size="4xl" isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent className="bg-[#1f1f1f]">
+      <ModalContent className="bg-white">
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
+            <ModalHeader className="flex flex-col gap-1 text-black">
               REST API Node
             </ModalHeader>
             <ModalBody>
               <div className="flex items-center justify-center w-full">
-                <p className="p-2 mx-2 mt-3 text-2xl">Schema</p>
+                <p className="p-2 mx-2 mt-3 text-2xl text-black">Schema</p>
               </div>
               <div className="flex flex-col items-center justify-center w-full h-full mb-3">
                 <Textarea
@@ -69,7 +69,7 @@ const IngestionAPISetupModal = ({
                   onChange={handleSchemaChange}
                 />
                 <div className="flex items-center justify-center w-full">
-                  <p className="p-2 mx-2 mt-3 text-2xl">Test Data</p>
+                  <p className="p-2 mx-2 mt-3 text-2xl text-black">Test Data</p>
                 </div>
                 <Textarea
                   minRows={10}
@@ -80,11 +80,11 @@ const IngestionAPISetupModal = ({
                   onChange={(e) => setTestData(e.target.value)}
                 />
 
-                <p className="p-2 mx-2 mt-3 text-2xl">Endpoint</p>
-                <div className="flex flex-row items-center justify-between w-full p-3 border-2 rounded-lg">
+                <p className="p-2 mx-2 mt-3 text-2xl text-black">Endpoint</p>
+                <div className="flex flex-row items-center justify-between w-full p-3 border-2 rounded-lg text-black">
                   <p>https://api.vortexeai.com/workflow/api_node/execute</p>
                   <div className="cursor-pointer">
-                    <CopyIcon className="w-8 h-8 text-white cursor-pointer" />
+                    <CopyIcon className="w-8 h-8 text-black cursor-pointer" />
                   </div>
                 </div>
               </div>

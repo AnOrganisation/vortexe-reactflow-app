@@ -18,15 +18,15 @@ const InputSourceModal = ({
 }) => {
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent className="bg-[#1f1f1f]">
+      <ModalContent className="bg-white">
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1 text-center">
+            <ModalHeader className="flex flex-col gap-1 text-center text-black">
               Input Action
             </ModalHeader>
             <ModalBody>
               <div className="flex items-center justify-center w-full">
-                <p className="p-2 mx-2 mt-3 text-sm font-light">
+                <p className="p-2 mx-2 mt-3 text-sm font-light text-black">
                   Pick which source you would like your data to come from
                 </p>
               </div>

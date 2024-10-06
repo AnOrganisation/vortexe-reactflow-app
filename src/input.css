@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components{
+    .navbar {
+    @apply absolute z-20 w-1/2 p-4 mt-24 text-white bg-white rounded-full cursor-pointer border-[#6366F1] border h-[44px] flex items-center
+    }
+    .btniprimary {
+        @apply w-[100px] h-[28px] bg-[#6366F1] text-white focus:outline-none
+    }  
+    .dropdown-item[data-hover=true] {
+        color: #f8f9fa; 
+    }
+    .settings-modal{
+        @apply bg-white border-0 rounded-lg shadow-lg
+    }
+    .input-node{
+        @apply w-40 h-40 border rounded-3xl border-[#6366F1] bg-white
+    }
+    .action-node{
+        @apply w-40 h-40 border rounded-3xl border-[#6366F1] bg-white
+    }
+    .command-bar{
+        @apply absolute z-20 w-48 max-h-screen text-black shadow-lg cursor-pointer bg-white left-5 top-28 flex flex-col items-center border rounded-3xl border-[#6366F1]
+    }
+}

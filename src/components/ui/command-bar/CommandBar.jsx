@@ -189,7 +189,7 @@ const CommandBar = ({
     zIndex: 20,
     width: "192px", // Adjust as needed
     maxHeight: "screen", // Adjust as needed
-    backgroundColor: "#1F1F1F",
+    backgroundColor: "white",
     borderRadius: "8px",
     border: "1px solid #6366F1",
     cursor: "pointer",
@@ -204,11 +204,11 @@ const CommandBar = ({
     <div
       ref={commandBarRef}
       style={commandBarStyle}
-      className="absolute z-20 w-48 max-h-screen text-white rounded-lg shadow-lg cursor-pointer bg-[#1F1F1F] left-5 top-28 flex flex-col items-center border border-[#6366F1]"
+      className="command-bar"
     >
       <input
         type="text"
-        className="w-[148px] h-[14px] p-3 mb-4 text-white border-none rounded-full outline-none mt-5 bg-[#3837376f] bg-opacity-40 text-xs"
+        className="w-[148px] h-[14px] p-3 mb-4 text-black border-1 border-[#999999] rounded-full outline-none mt-5 bg-white bg-opacity-20 text-xs"
         placeholder="Search an action"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}

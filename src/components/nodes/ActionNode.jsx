@@ -9,9 +9,9 @@ function ActionNode({ id, data }) {
 
   return (
     <>
-      <div className="w-40 h-40 border rounded-lg bg-[#1F1F1F]">
+      <div className="action-node">
         <div className="flex flex-col items-center justify-center mt-10">
-          <p className="text-white">{data.label}</p>
+          <p className="text-black">{data.label}</p>
           <Button
             size="sm"
             onPress={onOpen}

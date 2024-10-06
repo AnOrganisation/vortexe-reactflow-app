@@ -9,7 +9,7 @@ import ProfileSettings from "./nav-items/ProfileSettings";
  */
 const Navbar = ({ onUpload, setUserID }) => {
   return (
-    <nav className="absolute z-20 w-1/2 p-4 mt-24 text-white bg-[#1F1F1F] rounded-full cursor-pointer border-[#6366F1] border h-[44px] flex items-center">
+    <nav className="navbar">
       <div className="flex flex-row justify-between w-full">
         <UploadButton onUpload={onUpload} />
         <WorkspaceMenu />

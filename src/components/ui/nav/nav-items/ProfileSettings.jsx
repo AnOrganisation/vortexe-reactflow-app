@@ -77,7 +77,7 @@ const ProfileSettings = ({ setUserID }) => {
 
   return (
     <>
-      <Dropdown className="bg-[#1f1f1f]">
+      <Dropdown className="bg-white">
         <DropdownTrigger>
           <Button
             //onPress={onOpen}
@@ -94,7 +94,7 @@ const ProfileSettings = ({ setUserID }) => {
             />
           </Button>
         </DropdownTrigger>
-        <DropdownMenu aria-label="Static Actions" className="bg-[#1f1f1f]">
+        <DropdownMenu aria-label="Static Actions" className="bg-white">
           <DropdownItem key="account">
             <div className="flex flex-row items-center">
               <svg
@@ -102,7 +102,7 @@ const ProfileSettings = ({ setUserID }) => {
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
-                stroke="currentColor"
+                stroke="black"
                 className="w-6 h-6"
               >
                 <path
@@ -123,7 +123,7 @@ const ProfileSettings = ({ setUserID }) => {
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
-                stroke="currentColor"
+                stroke="black"
                 className="w-6 h-6"
               >
                 <path
@@ -169,7 +169,7 @@ const ProfileSettings = ({ setUserID }) => {
                 />
               </svg>
 
-              <p className="ml-3 profile-menu">Logout</p>
+              <p className="ml-3 text-[16px] leading-[10px] text-red-500">Logout</p>
             </div>
           </DropdownItem>
         </DropdownMenu>
@@ -181,12 +181,12 @@ const ProfileSettings = ({ setUserID }) => {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         isDismissable={false}
-        className="bg-[#1f1f1f] border-0 rounded-lg shadow-lg"
+        className="settings-modal"
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 font-light ">
+              <ModalHeader className="flex flex-col gap-0.5 font-light text-black text-3xl">
                 Account
                 <div className="gradient-divider"></div>
               </ModalHeader>
@@ -195,8 +195,8 @@ const ProfileSettings = ({ setUserID }) => {
                   <button
                     radius="full"
                     onClick={() => handleClick("profile")}
-                    className={`ml-3 font-light relative w-[171px] h-[42px] bg-[#1f1f1f] text-left rounded-full focus:outline-none mb-5 ${
-                      isProfileActive ? "bg-[#6366F14D]" : null
+                    className={`ml-3 font-light text-black relative w-[171px] h-[42px] bg-white text-left rounded-full focus:outline-none mb-5 ${
+                      isProfileActive ? "bg-[#6366f1] text-white" : null
                     }`}
                   >
                     Profile
@@ -204,8 +204,8 @@ const ProfileSettings = ({ setUserID }) => {
                   <button
                     radius="full"
                     onClick={() => handleClick("subscriptions")}
-                    className={`ml-3 font-light w-[171px] h-[42px] bg-[#1f1f1f] text-left rounded-full focus:outline-none mb-5 ${
-                      isSubscriptionsActive ? "bg-[#6366F14D]" : null
+                    className={`ml-3 font-light text-black w-[171px] h-[42px] bg-white text-left rounded-full focus:outline-none mb-5 ${
+                      isSubscriptionsActive ? "bg-[#6366f1] text-white" : null
                     }`}
                   >
                     Subscription
@@ -233,10 +233,10 @@ const ProfileSettings = ({ setUserID }) => {
                   <div className="w-[100%]">
                     <ModalBody>
                       <div className="flex flex-row justify-between mt-5 mb-5">
-                        <p className="font-light">Username</p>
+                        <p className="font-light text-black">Username</p>
                         <div className="w-[200px]"></div>
                         <input
-                          className="w-40 rounded-md border border-white bg-[#1f1f1f]"
+                          className="w-70 rounded-md border-2 text-black border-[#d4d4d4] bg-white"
                           type="text"
                           placeholder="Type Here"
                           readOnly
@@ -245,10 +245,10 @@ const ProfileSettings = ({ setUserID }) => {
                       </div>
                       <Divider className="bg-white" />
                       <div className="flex flex-row justify-between mt-5 mb-5">
-                        <p className="font-light">Name</p>
+                        <p className="font-light text-black">Name</p>
                         <div className="w-[200px]"></div>
                         <input
-                          className="w-40 rounded-md border border-white bg-[#1f1f1f]"
+                          className="w-70 rounded-md border-2 text-black border-[#d4d4d4] bg-white"
                           type="text"
                           placeholder="Type Here"
                           readOnly
@@ -257,19 +257,9 @@ const ProfileSettings = ({ setUserID }) => {
                       </div>
                       <Divider className="bg-white" />
                       <div className="flex flex-row justify-between mt-5 mb-5">
-                        <p className="font-light">Business Name</p>
+                        <p className="font-light text-black">Delete Account</p>
                         <div className="w-[200px]"></div>
-                        <input
-                          className="w-40 rounded-md border border-white bg-[#1f1f1f]"
-                          type="text"
-                          placeholder="Type Here"
-                        ></input>
-                      </div>
-                      <Divider className="bg-white" />
-                      <div className="flex flex-row justify-between mt-5 mb-5">
-                        <p className="font-light">Delete Account</p>
-                        <div className="w-[200px]"></div>
-                        <button className="w-24 rounded-md bg-[#FF0000] text-white text-left">
+                        <button className="w-24 rounded-md bg-[#FF0000] text-white text-center">
                           Delete
                         </button>
                       </div>
@@ -278,14 +268,6 @@ const ProfileSettings = ({ setUserID }) => {
                 </div>
               </div>
               <ModalFooter>
-                <Button
-                  color="danger"
-                  variant="light"
-                  onPress={onClose}
-                  className="focus:outline-none"
-                >
-                  Close
-                </Button>
                 <Button
                   color="primary"
                   onPress={onClose}
