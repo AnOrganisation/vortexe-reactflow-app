@@ -35,11 +35,14 @@ const Workflow = ({
       let content = activeFileContent; // Start with the initial content
 
       for (const prompt of prompts) {
-        const response = await axios.post("http://127.0.0.1:8001/custom", {
-          content: content,
-          summary_length: 0,
-          prompt: prompt,
-        });
+        const response = await axios.post(
+          "https://api.vortexeai.com:8001/custom",
+          {
+            content: content,
+            summary_length: 0,
+            prompt: prompt,
+          }
+        );
 
         console.log("Success:", response.data);
 

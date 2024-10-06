@@ -42,7 +42,7 @@ const CommandBar = ({
   const fetchBasicActions = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8003/v1/get_basic_actions",
+        "https://api.vortexeai.com/workflow/v1/get_basic_actions",
         {
           headers: {
             "Content-Type": "application/json",
@@ -62,7 +62,7 @@ const CommandBar = ({
   const getCustomActions = useCallback(async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8003/v1/action/list?user_id=${userID}`,
+        `https://api.vortexeai.com/workflow/v1/action/list?user_id=${userID}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -138,7 +138,7 @@ const CommandBar = ({
       if (customAction) {
         try {
           const response = await axios.post(
-            `http://127.0.0.1:8003/v1/action/save`,
+            `https://api.vortexeai.com/workflow/v1/action/save`,
             customAction,
             {
               headers: {

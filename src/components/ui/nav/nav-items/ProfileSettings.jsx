@@ -44,7 +44,6 @@ const ProfileSettings = ({ setUserID }) => {
   };
 
   useEffect(() => {
-    // Define an async function inside the useEffect
     const registerUser = async () => {
       if (isAuthenticated) {
         setUserID(user.sub.slice(user.sub.indexOf("|") + 1));
@@ -59,7 +58,7 @@ const ProfileSettings = ({ setUserID }) => {
         };
         try {
           const response = await axios.post(
-            "http://127.0.0.1:8002/register_user",
+            "https://api.vortexeai.com/user/register_user",
             user_data,
             {
               headers: {
@@ -145,7 +144,9 @@ const ProfileSettings = ({ setUserID }) => {
           <DropdownItem
             onClick={() =>
               logout({
-                logoutParams: { returnTo: `${window.location.origin}` },
+                logoutParams: {
+                  returnTo: `${window.location.origin}`,
+                },
               })
             }
             key="delete"
