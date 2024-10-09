@@ -65,10 +65,21 @@ const DefaultInputNode = ({ data }) => {
     setSchemaValue(e.target.value);
   };
 
-  const handleSchemaSave = (value) => {
-    console.log("Schema saved: ", value);
+  const [dataValue, setDataValue] = useState("");
+  const handleDataValueChange = (e) => {
+    setDataValue(e.target.value);
   };
 
+  const handleSchemaSave = (value) => {
+    console.log("Schema saved: ", value);
+    setSchemaValue(value);
+  };
+
+  const handleDataValueSave = (value) => {
+    console.log("Data saved: ", value);
+    setDataValue(value);
+    data.outputData = value;
+  };
   return (
     <>
       <div className="w-40 h-40 border rounded-lg bg-[#1F1F1F]">
@@ -94,6 +105,10 @@ const DefaultInputNode = ({ data }) => {
         handleSchemaSave={handleSchemaSave}
         schemaValue={schemaValue}
         handleSchemaChange={handleSchemaChange}
+        dataValue={dataValue}
+        handleDataValueChange={handleDataValueChange}
+        handleDataValueSave={handleDataValueSave}
+        apiToken={data.apiToken}
       ></IngestionAPISetupModal>
       <InputSourceModal
         isOpen={isOpen && selectedSource !== "API Ingestion"}

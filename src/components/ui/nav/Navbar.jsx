@@ -7,13 +7,13 @@ import ProfileSettings from "./nav-items/ProfileSettings";
  *
  * @returns {JSX.Element} The rendered Navbar component.
  */
-const Navbar = ({ onUpload, setUserID }) => {
+const Navbar = ({ onUpload, setUserID, setApiToken }) => {
   return (
     <nav className="absolute z-20 w-1/2 p-4 mt-24 text-white bg-[#1F1F1F] rounded-full cursor-pointer border-[#6366F1] border h-[44px] flex items-center">
       <div className="flex flex-row justify-between w-full">
         <UploadButton onUpload={onUpload} />
         <WorkspaceMenu />
-        <ProfileSettings setUserID={setUserID} />
+        <ProfileSettings setUserID={setUserID} setApiToken={setApiToken} />
       </div>
     </nav>
   );

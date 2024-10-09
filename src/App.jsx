@@ -73,6 +73,7 @@ const App = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [connection, setConnection] = useState(null);
+  const [apiToken, setApiToken] = useState(null);
 
   // State variables for command bar
   const [showCommandBarForNodeAddition, setShowCommandBarForNodeAddition] =
@@ -84,8 +85,32 @@ const App = () => {
   const [workflows, setWorkflows] = useState([]);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+    (params) => {
+      setEdges((eds) => addEdge(params, eds));
+
+      // Find source and target nodes
+      const sourceNode = nodes.find((node) => node.id === params.source);
+      const targetNode = nodes.find((node) => node.id === params.target);
+
+      if (sourceNode && targetNode) {
+        // Update the target node's inputData with the source node's outputData
+        const updatedNodes = nodes.map((node) => {
+          if (node.id === targetNode.id) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                inputData: sourceNode.data.outputData,
+              },
+            };
+          }
+          return node;
+        });
+
+        setNodes(updatedNodes);
+      }
+    },
+    [setEdges, nodes, setNodes]
   );
 
   const onInit = useCallback((instance) => {
@@ -147,6 +172,9 @@ const App = () => {
       data: {
         label: `${commandData.action_name}`,
         actionID: commandData.action_id,
+        inputData: null,
+        outputData: null,
+        updateDownstreamNodes: updateDownstreamNodes,
       },
       origin: [0.5, 0.0],
     };
@@ -206,6 +234,35 @@ const App = () => {
 
     // Set the activeNodeID based on the new active state
     setActiveNodeID(isActiveAfterClick ? node.id : null);
+  };
+
+  const updateDownstreamNodes = (nodeId, newData) => {
+    // Find edges where the current node is the source
+    const connectedEdges = edges.filter((edge) => edge.source === nodeId);
+
+    connectedEdges.forEach((edge) => {
+      const targetNodeId = edge.target;
+      // Update the target node's inputData
+      setNodes((nds) =>
+        nds.map((node) => {
+          if (node.id === targetNodeId) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                inputData: newData,
+              },
+            };
+          }
+          return node;
+        })
+      );
+      // Recursively update nodes connected to the target node
+      const targetNode = nodes.find((node) => node.id === targetNodeId);
+      if (targetNode) {
+        updateDownstreamNodes(targetNodeId, targetNode.data.outputData);
+      }
+    });
   };
 
   const onUpload = async (fileUrl, formData) => {
@@ -292,6 +349,8 @@ const App = () => {
       position: { x: 50, y: 50 },
       data: {
         label: "Input Node",
+        outputData: null,
+        apiToken: apiToken,
       },
     };
     newNodes.push(newNode);
@@ -321,7 +380,11 @@ const App = () => {
   const appContent = (
     <div style={{ width: "100vw", height: "100vh" }}>
       <div className="relative flex flex-row items-center justify-center w-full">
-        <Navbar onUpload={onUpload} setUserID={setUserID} />
+        <Navbar
+          onUpload={onUpload}
+          setUserID={setUserID}
+          setApiToken={setApiToken}
+        />
       </div>
       {showCommandBarForNodeAddition && (
         <CommandBar

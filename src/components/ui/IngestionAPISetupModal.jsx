@@ -18,25 +18,29 @@ const IngestionAPISetupModal = ({
   handleSchemaSave,
   schemaValue,
   handleSchemaChange,
+  dataValue,
+  handleDataValueChange,
+  handleDataValueSave,
+  apiToken,
 }) => {
-  const [testData, setTestData] = useState("");
   const [isValidSchema, setIsValidSchema] = useState(false);
 
   const handleVerification = async () => {
     // Perform schema validation here
     // setIsValidSchema(true); // For demonstration purposes, set as true
     const client_schema = {
-      client_schema: JSON.parse(schemaValue),
-      data: JSON.parse(testData),
+      // client_schema: JSON.parse(schemaValue),
+      data: dataValue,
     };
 
     try {
       const response = await axios.post(
-        "https://api.vortexeai.com/workflow/api_node/execute",
-        client_schema,
+        "https://api.vortexeai.com/workflow/api_node/execute/wrk1",
+        client_schema.data,
         {
           headers: {
             "Content-Type": "application/json",
+            "x-api-key": apiToken,
           },
         }
       );
@@ -76,8 +80,8 @@ const IngestionAPISetupModal = ({
                   placeholder="Enter your schema"
                   className="bg-inherit"
                   variant="bordered"
-                  value={testData}
-                  onChange={(e) => setTestData(e.target.value)}
+                  value={dataValue}
+                  onChange={handleDataValueChange}
                 />
 
                 <p className="p-2 mx-2 mt-3 text-2xl">Endpoint</p>
@@ -96,6 +100,7 @@ const IngestionAPISetupModal = ({
                   onPress={() => {
                     onClose();
                     handleSchemaSave(schemaValue);
+                    handleDataValueSave(dataValue);
                   }}
                 >
                   Save
