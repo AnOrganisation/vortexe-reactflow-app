@@ -178,7 +178,7 @@ const App = () => {
   const handleCommandSelected = (commandData) => {
     console.log("Command Data in App.jsx:", commandData);
     console.log("Workflow Actions:", workflowActions);
-    //Store commandData to be sent to the workflow service for saving
+    // Store commandData to be sent to the workflow service for saving
     setWorkflowActions((wfs) => [...wfs, commandData]);
 
     // Use the stored newNodeData and the commandData to add the node
@@ -191,25 +191,28 @@ const App = () => {
       data: {
         label: `${commandData.action_name}`,
         actionID: commandData.action_id,
-        inputData: null,
+        inputData: null, // Will be updated shortly
         outputData: null,
         updateDownstreamNodes: updateDownstreamNodes,
       },
       origin: [0.5, 0.0],
     };
 
-    const edgeId = `e-${getId()}`;
+    const edgeParams = {
+      id: `e-${getId()}`,
+      source: newNodeData.source,
+      sourceHandle: newNodeData.sourceHandle,
+      target: newNodeId,
+      targetHandle: null,
+    };
 
+    // Update nodes and edges
     setNodes((nds) => nds.concat(newNode));
-    setEdges((eds) =>
-      eds.concat({
-        id: edgeId,
-        source: newNodeData.source,
-        sourceHandle: newNodeData.sourceHandle,
-        target: newNodeId,
-        targetHandle: null,
-      })
-    );
+    setEdges((eds) => eds.concat(edgeParams));
+
+    // Update inputData of the new node
+    const sourceId = newNodeData.source.toString();
+    updateInputData(sourceId, newNodeId);
 
     // Hide the command bar
     setShowCommandBarForNodeAddition(false);
@@ -257,33 +260,49 @@ const App = () => {
 
   const updateDownstreamNodes = useCallback(
     (nodeId, newData) => {
-      // Use functional updates to work with the latest state
+      const visitedNodes = new Set();
+      const nodesToUpdate = [];
+
+      const traverse = (currentNodeId, currentData) => {
+        if (visitedNodes.has(currentNodeId)) {
+          return;
+        }
+        visitedNodes.add(currentNodeId);
+
+        const connectedEdges = edges.filter(
+          (edge) => edge.source === currentNodeId
+        );
+        connectedEdges.forEach((edge) => {
+          const targetNodeId = edge.target;
+
+          // Add target nodes to nodesToUpdate
+          nodesToUpdate.push({ nodeId: targetNodeId, inputData: currentData });
+
+          traverse(targetNodeId, currentData);
+        });
+      };
+
+      traverse(nodeId, newData);
+
       setNodes((prevNodes) => {
-        const updatedNodes = prevNodes.map((node) => {
-          if (node.id === nodeId) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                inputData: newData,
-              },
-            };
+        return prevNodes.map((node) => {
+          const update = nodesToUpdate.find((n) => n.nodeId === node.id);
+          if (update) {
+            if (node.data.inputData !== update.inputData) {
+              return {
+                ...node,
+                data: {
+                  ...node.data,
+                  inputData: update.inputData,
+                },
+              };
+            }
           }
           return node;
         });
-
-        // Find connected edges
-        const connectedEdges = edges.filter((edge) => edge.source === nodeId);
-
-        connectedEdges.forEach((edge) => {
-          const targetNodeId = edge.target;
-          updateDownstreamNodes(targetNodeId, newData);
-        });
-
-        return updatedNodes;
       });
     },
-    [setNodes, edges] // Keep dependencies minimal
+    [setNodes, edges]
   );
 
   const nodeTypes = useMemo(() => {

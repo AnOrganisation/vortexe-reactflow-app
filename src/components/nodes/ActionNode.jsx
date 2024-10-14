@@ -11,22 +11,25 @@ function ActionNode({ id, data, setNodes }) {
     const result = processData(data.inputData);
 
     // Use setNodes to update the node's data in the global state
-    setNodes((nodes) =>
-      nodes.map((node) => {
-        if (node.id === id) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              outputData: result,
-            },
-          };
-        }
-        return node;
-      })
-    );
+    if (result !== data.outputData) {
+      // Update this node's outputData
+      setNodes((nodes) =>
+        nodes.map((node) => {
+          if (node.id === id) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                outputData: result,
+              },
+            };
+          }
+          return node;
+        })
+      );
 
-    data.updateDownstreamNodes(id, result);
+      data.updateDownstreamNodes(id, result);
+    }
   }, [data.inputData, id, setNodes]);
 
   const processData = (input) => {
