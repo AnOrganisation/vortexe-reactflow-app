@@ -1,25 +1,37 @@
-import React from "react";
-import { useRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Handle, Position } from "reactflow";
 import { Button, useDisclosure } from "@nextui-org/react";
-function ActionNode({ id, data }) {
-  // Reference to the node's DOM element
-  const nodeRef = useRef(null);
+
+function ActionNode({ id, data, setNodes }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
     console.log("inputData", data.inputData);
     console.log("outputData", data.outputData);
     const result = processData(data.inputData);
-    data.outputData = result;
+
+    // Use setNodes to update the node's data in the global state
+    setNodes((nodes) =>
+      nodes.map((node) => {
+        if (node.id === id) {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              outputData: result,
+            },
+          };
+        }
+        return node;
+      })
+    );
+
     data.updateDownstreamNodes(id, result);
-  }, [data.inputData]); // Only re-run effect if 'data' changes
+  }, [data.inputData, id, setNodes]);
 
   const processData = (input) => {
     // Your processing logic here
-    // For example, modify or transform the input data
-    input = input + " " + "HELLO";
-    return input; // Replace with actual processing
+    return input ? input + " HELLO" : null; // Handle null inputData
   };
 
   return (
@@ -36,8 +48,18 @@ function ActionNode({ id, data }) {
             Edit
           </Button>
         </div>
-        <Handle type="target" position={Position.Left} />
-        <Handle type="source" position={Position.Right} />
+        <Handle
+          type="target"
+          position={Position.Left}
+          id="target"
+          isConnectable={true}
+        />
+        <Handle
+          type="source"
+          position={Position.Right}
+          id="source"
+          isConnectable={true}
+        />
       </div>
     </>
   );

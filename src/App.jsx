@@ -28,13 +28,13 @@ import WorkflowEdge from "./components/edges/WorkflowEdge.jsx";
 import { Route, Routes } from "react-router-dom";
 import Home from "./Home.jsx";
 
-const nodeTypes = {
-  NumberInput,
-  ActionNode,
-  FileNode,
-  OutputNode,
-  DefaultInputNode,
-};
+// const nodeTypes = {
+//   NumberInput,
+//   ActionNode,
+//   FileNode,
+//   OutputNode,
+//   DefaultInputNode,
+// };
 
 const edgeTypes = {
   custom: WorkflowEdge,
@@ -88,14 +88,35 @@ const App = () => {
     (params) => {
       setEdges((eds) => addEdge(params, eds));
 
-      // Find source and target nodes
-      const sourceNode = nodes.find((node) => node.id === params.source);
-      const targetNode = nodes.find((node) => node.id === params.target);
+      console.log("onConnect called with params:", params);
+
+      // Update inputData of the target node
+      const sourceId = params.source.toString();
+      const targetId = params.target.toString();
+      updateInputData(sourceId, targetId);
+    },
+    [setEdges]
+  );
+
+  const onInit = useCallback((instance) => {
+    setReactFlowInstance(instance);
+  }, []);
+
+  const onConnectStart = useCallback((event, params) => {
+    console.log("onConnectStart", params);
+    setConnection({ source: params.nodeId, sourceHandle: params.handleId });
+  }, []);
+
+  const updateInputData = (sourceId, targetId) => {
+    setNodes((prevNodes) => {
+      const sourceNode = prevNodes.find((node) => node.id === sourceId);
+      const targetNode = prevNodes.find((node) => node.id === targetId);
 
       if (sourceNode && targetNode) {
-        // Update the target node's inputData with the source node's outputData
-        const updatedNodes = nodes.map((node) => {
-          if (node.id === targetNode.id) {
+        console.log("Updating inputData of target node");
+
+        return prevNodes.map((node) => {
+          if (node.id === targetId) {
             return {
               ...node,
               data: {
@@ -106,23 +127,16 @@ const App = () => {
           }
           return node;
         });
-
-        setNodes(updatedNodes);
+      } else {
+        console.log("Source or target node not found");
       }
-    },
-    [setEdges, nodes, setNodes]
-  );
-
-  const onInit = useCallback((instance) => {
-    setReactFlowInstance(instance);
-  }, []);
-
-  const onConnectStart = useCallback((event, params) => {
-    setConnection({ source: params.nodeId, sourceHandle: params.handleId });
-  }, []);
+      return prevNodes;
+    });
+  };
 
   const onConnectEnd = useCallback(
     (event) => {
+      console.log("onConnectEnd", event);
       const targetIsPane = event.target.classList.contains("react-flow__pane");
 
       if (targetIsPane && reactFlowInstance && connection) {
@@ -154,6 +168,11 @@ const App = () => {
     },
     [reactFlowInstance, connection]
   );
+
+  const isValidConnection = (connection) => {
+    console.log("isValidConnection called with:", connection);
+    return true; // Allow all connections
+  };
 
   // Function to handle command selection from the command bar
   const handleCommandSelected = (commandData) => {
@@ -236,16 +255,12 @@ const App = () => {
     setActiveNodeID(isActiveAfterClick ? node.id : null);
   };
 
-  const updateDownstreamNodes = (nodeId, newData) => {
-    // Find edges where the current node is the source
-    const connectedEdges = edges.filter((edge) => edge.source === nodeId);
-
-    connectedEdges.forEach((edge) => {
-      const targetNodeId = edge.target;
-      // Update the target node's inputData
-      setNodes((nds) =>
-        nds.map((node) => {
-          if (node.id === targetNodeId) {
+  const updateDownstreamNodes = useCallback(
+    (nodeId, newData) => {
+      // Use functional updates to work with the latest state
+      setNodes((prevNodes) => {
+        const updatedNodes = prevNodes.map((node) => {
+          if (node.id === nodeId) {
             return {
               ...node,
               data: {
@@ -255,15 +270,43 @@ const App = () => {
             };
           }
           return node;
-        })
-      );
-      // Recursively update nodes connected to the target node
-      const targetNode = nodes.find((node) => node.id === targetNodeId);
-      if (targetNode) {
-        updateDownstreamNodes(targetNodeId, targetNode.data.outputData);
-      }
-    });
-  };
+        });
+
+        // Find connected edges
+        const connectedEdges = edges.filter((edge) => edge.source === nodeId);
+
+        connectedEdges.forEach((edge) => {
+          const targetNodeId = edge.target;
+          updateDownstreamNodes(targetNodeId, newData);
+        });
+
+        return updatedNodes;
+      });
+    },
+    [setNodes, edges] // Keep dependencies minimal
+  );
+
+  const nodeTypes = useMemo(() => {
+    // Functions and variables used within nodeTypes
+    const memoizedSetNodes = setNodes;
+    const memoizedUpdateDownstreamNodes = updateDownstreamNodes;
+
+    return {
+      ActionNode: (nodeProps) => (
+        <ActionNode
+          {...nodeProps}
+          setNodes={memoizedSetNodes}
+          updateDownstreamNodes={memoizedUpdateDownstreamNodes}
+        />
+      ),
+      DefaultInputNode: (nodeProps) => (
+        <DefaultInputNode {...nodeProps} setNodes={memoizedSetNodes} />
+      ),
+      NumberInput,
+      FileNode,
+      OutputNode,
+    };
+  }, [setNodes, updateDownstreamNodes]); // Dependencies should not change frequently
 
   const onUpload = async (fileUrl, formData) => {
     // Logic for handling file upload
@@ -341,10 +384,9 @@ const App = () => {
   };
 
   const handlePress = () => {
-    const newNodes = [...nodes];
     const newNodeId = getId();
     const newNode = {
-      type: "DefaultInputNode",
+      type: "DefaultInputNode", // Ensure this matches the key in nodeTypes
       id: newNodeId,
       position: { x: 50, y: 50 },
       data: {
@@ -353,8 +395,7 @@ const App = () => {
         apiToken: apiToken,
       },
     };
-    newNodes.push(newNode);
-    setNodes(newNodes);
+    setNodes((nds) => nds.concat(newNode));
   };
 
   const handleSave = async () => {
@@ -427,7 +468,8 @@ const App = () => {
         onConnect={onConnect}
         onConnectStart={onConnectStart}
         onConnectEnd={onConnectEnd}
-        onKeyDown={handleKeyDown}
+        isValidConnection={isValidConnection}
+        // onKeyDown={handleKeyDown}
         onNodeClick={onNodeClick}
         nodesDraggable={true}
         panOnScroll={false}

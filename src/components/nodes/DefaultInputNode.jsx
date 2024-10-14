@@ -17,7 +17,7 @@ import InputSourceModal from "../ui/InputSourceModal";
 import "../../style.css";
 import IngestionAPISetupModal from "../ui/IngestionAPISetupModal";
 
-const DefaultInputNode = ({ data }) => {
+const DefaultInputNode = ({ id, data, setNodes }) => {
   const IOSource = [
     {
       name: "Salesforce",
@@ -78,8 +78,25 @@ const DefaultInputNode = ({ data }) => {
   const handleDataValueSave = (value) => {
     console.log("Data saved: ", value);
     setDataValue(value);
-    data.outputData = value;
+
+    // Use setNodes to update the node's data in the global state
+    setNodes((nodes) =>
+      nodes.map((node) => {
+        if (node.id === id) {
+          console.log("Setting node");
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              outputData: value,
+            },
+          };
+        }
+        return node;
+      })
+    );
   };
+
   return (
     <>
       <div className="w-40 h-40 border rounded-lg bg-[#1F1F1F]">
@@ -97,7 +114,12 @@ const DefaultInputNode = ({ data }) => {
             Set Up
           </Button>
         </div>
-        <Handle type="source" position={Position.Right} />
+        <Handle
+          type="source"
+          position={Position.Right}
+          id="source"
+          isConnectable={true}
+        />
       </div>
       <IngestionAPISetupModal
         isOpen={isOpen && selectedSource === "API Ingestion"}
