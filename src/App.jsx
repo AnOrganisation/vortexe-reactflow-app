@@ -193,6 +193,7 @@ const App = () => {
         actionID: commandData.action_id,
         inputData: null, // Will be updated shortly
         outputData: null,
+        apiToken: apiToken,
         updateDownstreamNodes: updateDownstreamNodes,
       },
       origin: [0.5, 0.0],
@@ -316,6 +317,7 @@ const App = () => {
           {...nodeProps}
           setNodes={memoizedSetNodes}
           updateDownstreamNodes={memoizedUpdateDownstreamNodes}
+          userID={userID}
         />
       ),
       DefaultInputNode: (nodeProps) => (
