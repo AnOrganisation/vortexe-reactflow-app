@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Handle, Position } from "reactflow";
 import {
   Modal,
@@ -14,13 +14,14 @@ import ActionFeedbackModal from "../ui/ActionFeedbackModal";
 
 function ActionNode({ id, data, setNodes, userID }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [actionResult, setActionResult] = useState("");
 
   useEffect(() => {
     (async () => {
       console.log("inputData", data.inputData);
       console.log("outputData", data.outputData);
       const result = await processData(data.inputData);
-
+      setActionResult(result);
       // Use setNodes to update the node's data in the global state
       if (result !== data.outputData) {
         // Update this node's outputData
@@ -110,6 +111,7 @@ function ActionNode({ id, data, setNodes, userID }) {
         onOpenChange={onOpenChange}
         apiToken={data.apiToken}
         label={data.label}
+        actionResult={actionResult}
       ></ActionFeedbackModal>
     </>
   );
