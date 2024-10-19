@@ -84,7 +84,7 @@ function ActionNode({ id, data, setNodes, userID }) {
       <div className="w-40 h-40 border rounded-lg bg-[#1F1F1F]">
         <div className="flex flex-col items-center justify-center mt-10">
           <p className="text-white">{data.label}</p>
-          <p className="text-white">{data.inputData}</p>
+          {/* <p className="text-white">{data.inputData}</p> */}
           <Button
             size="sm"
             onPress={onOpen}
@@ -112,6 +112,7 @@ function ActionNode({ id, data, setNodes, userID }) {
         apiToken={data.apiToken}
         label={data.label}
         actionResult={actionResult}
+        theme="dark"
       ></ActionFeedbackModal>
     </>
   );

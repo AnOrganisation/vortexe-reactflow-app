@@ -503,7 +503,13 @@ const App = () => {
         onInit={onInit}
       >
         <Background variant="dots" />
-        <MiniMap nodeColor={nodeColor} nodeStrokeWidth={3} zoomable pannable />
+        <MiniMap
+          style={{ backgroundColor: "#515253" }}
+          nodeColor={nodeColor}
+          nodeStrokeWidth={3}
+          zoomable
+          pannable
+        />
       </ReactFlow>
       <div className="absolute z-50 transform -translate-x-1/2 bottom-5 left-1/2">
         <Button

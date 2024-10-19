@@ -13,6 +13,7 @@
     "@auth0/auth0-react": "^2.2.4",
     "@nextui-org/react": "^2.4.6",
     "axios": "^1.7.3",
+    "draft-js": "^0.11.7",
     "framer-motion": "^11.3.12",
     "pdf-lib": "^1.17.1",
     "react": "^18.3.1",
