@@ -8,6 +8,7 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Badge,
 } from "@nextui-org/react";
 import { Handle, Position } from "reactflow";
 import SalesforceLogo from "../../assets/salesforcelogo.png";
@@ -58,6 +59,7 @@ const DefaultInputNode = ({ id, data, setNodes }) => {
   ];
   const [selectedSource, setSelectedSource] = useState(null);
   const [sources, setSources] = useState(IOSource);
+  const [isVerified, setIsVerified] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const [schemaValue, setSchemaValue] = useState(""); // Lift state up
@@ -97,48 +99,67 @@ const DefaultInputNode = ({ id, data, setNodes }) => {
     );
   };
 
+  const borderColor = isVerified ? "#22c55e" : "#ff0000";
+
   return (
     <>
-      <div className="w-40 h-40 border rounded-lg bg-[#1F1F1F]">
-        <div className="flex flex-col items-center justify-center mt-10">
-          <p className="text-white">
-            {selectedSource === "API Ingestion"
-              ? "API Ingestion Node"
-              : data.label}
-          </p>
-          <Button
-            size="sm"
-            onPress={onOpen}
-            className="bg-[#6366F1] text-white rounded-full focus:outline-none hover:border-none mt-8"
-          >
-            Set Up
-          </Button>
+      <div className="relative">
+        <div
+          className={`absolute w-4 h-4 rounded-full -right-[12px] bottom-[158px] flex justify-center items-center font-bold text-xl ${
+            isVerified ? "text-green-500" : "text-red-500"
+          }`}
+        >
+          {isVerified ? "✔" : "!"}
         </div>
-        <Handle
-          type="source"
-          position={Position.Right}
-          id="source"
-          isConnectable={true}
+        <div
+          className="w-40 h-40 rounded-lg bg-[#1F1F1F]"
+          style={{
+            borderWidth: "1px",
+            borderStyle: "solid",
+            borderColor: borderColor,
+          }}
+        >
+          <div className="flex flex-col items-center justify-center mt-10">
+            <p className="text-white">
+              {selectedSource === "API Ingestion"
+                ? "API Ingestion Node"
+                : data.label}
+            </p>
+            <Button
+              size="sm"
+              onPress={onOpen}
+              className="bg-[#6366F1] text-white rounded-full focus:outline-none hover:border-none mt-8"
+            >
+              {isVerified ? "Edit" : "Set Up"}
+            </Button>
+          </div>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="source"
+            isConnectable={true}
+          />
+        </div>
+        <IngestionAPISetupModal
+          isOpen={isOpen && selectedSource === "API Ingestion"}
+          onOpenChange={onOpenChange}
+          handleSchemaSave={handleSchemaSave}
+          schemaValue={schemaValue}
+          handleSchemaChange={handleSchemaChange}
+          dataValue={dataValue}
+          handleDataValueChange={handleDataValueChange}
+          handleDataValueSave={handleDataValueSave}
+          apiToken={data.apiToken}
+          setIsVerified={setIsVerified}
+        ></IngestionAPISetupModal>
+        <InputSourceModal
+          isOpen={isOpen && selectedSource !== "API Ingestion"}
+          onOpenChange={onOpenChange}
+          sources={sources}
+          selectedSource={selectedSource}
+          setSelectedSource={setSelectedSource}
         />
       </div>
-      <IngestionAPISetupModal
-        isOpen={isOpen && selectedSource === "API Ingestion"}
-        onOpenChange={onOpenChange}
-        handleSchemaSave={handleSchemaSave}
-        schemaValue={schemaValue}
-        handleSchemaChange={handleSchemaChange}
-        dataValue={dataValue}
-        handleDataValueChange={handleDataValueChange}
-        handleDataValueSave={handleDataValueSave}
-        apiToken={data.apiToken}
-      ></IngestionAPISetupModal>
-      <InputSourceModal
-        isOpen={isOpen && selectedSource !== "API Ingestion"}
-        onOpenChange={onOpenChange}
-        sources={sources}
-        selectedSource={selectedSource}
-        setSelectedSource={setSelectedSource}
-      />
     </>
   );
 };

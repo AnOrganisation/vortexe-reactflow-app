@@ -22,6 +22,7 @@ const IngestionAPISetupModal = ({
   handleDataValueChange,
   handleDataValueSave,
   apiToken,
+  setIsVerified,
 }) => {
   const [isValidSchema, setIsValidSchema] = useState(false);
 
@@ -46,8 +47,10 @@ const IngestionAPISetupModal = ({
       );
       console.log("API request successful: ", response.data);
       setIsValidSchema(true);
+      setIsVerified(true);
     } catch (error) {
       console.error("API request failed:", error);
+      setIsVerified(false);
     }
   };
 
